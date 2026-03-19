@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+:root {
+  --content-max-width: 100rem;
+  /* Equivalent to max-w-7xl (1280px) */
+}
+
+body {
+  margin: 0;
+  background-color: black;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* --- Custom UI Styles --- */
+.square-gradient {
+  background: linear-gradient(#000, #000) padding-box,
+    linear-gradient(90deg, #38bdf8, #10b981) border-box;
+  border-radius: 16px;
+  border: 2px solid transparent;
+  color: white;
+  position: relative;
+  transition: all 0.4s ease;
+}
+
+.square-gradient:hover {
+  background: linear-gradient(90deg, #38bdf8, #10b981);
+  color: #000;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+  transform: scale(1.05);
+}
+
+/* --- Infinite Marquee Animation --- */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-25%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+.group:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+/* --- Infinite Scroll Left/Right for Gallery & Skills --- */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-33.333%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 25s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 25s linear infinite;
+}
+
+.pause-on-hover:hover .animate-scroll-left,
+.pause-on-hover:hover .animate-scroll-right {
+  animation-play-state: paused;
+}
+
+/* Tumble Cube Animation CSS */
+.tumble-container {
+  position: relative;
+  width: 100%;
+  transform: rotate(-35deg);
+}
+
+.tumble-box {
+  position: relative;
+  left: -100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(100% + 400px);
+  -webkit-box-reflect: below 1px linear-gradient(transparent, rgba(0, 0, 0, 0.5));
+  animation: animatesurface 1.5s ease-in-out infinite;
+}
+
+@keyframes animatesurface {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-200px);
+  }
+}
+
+.tumble-cube {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  background: rgba(0, 212, 255, 0.05);
+  border: 2px solid #00d4ff;
+  box-shadow: 0 0 5px rgba(0, 212, 255, 0.5),
+    0 0 25px rgba(0, 212, 255, 0.5),
+    0 0 50px rgba(0, 212, 255, 0.5),
+    inset 0 0 30px rgba(0, 212, 255, 0.3);
+  transform-origin: bottom right;
+  animation: animate-tumble 1.5s ease-in-out infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(4px);
+}
+
+.light-mode .tumble-cube {
+  background: rgba(249, 115, 22, 0.05);
+  border: 2px solid #f97316;
+  box-shadow: 0 0 5px rgba(249, 115, 22, 0.5),
+    0 0 25px rgba(249, 115, 22, 0.5),
+    0 0 50px rgba(249, 115, 22, 0.5),
+    inset 0 0 30px rgba(249, 115, 22, 0.3);
+}
+
+@keyframes animate-tumble {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  60%,
+  70%,
+  80%,
+  100% {
+    transform: rotate(90deg);
+  }
+
+  65% {
+    transform: rotate(85deg);
+  }
+
+  75% {
+    transform: rotate(87.5deg);
+  }
+}
+
+/* Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.tw-fade-in {
+  animation: fade-in 0.7s ease-out forwards;
+  opacity: 0;
+}
+
+.tw-slide-up {
+  animation: slide-up 0.7s ease-out forwards;
+  opacity: 0;
+}
+
+.tw-slide-in-left {
+  animation: slide-in-left 0.7s ease-out forwards;
+  opacity: 0;
+}
+
+.tw-delay-300 {
+  animation-delay: 300ms;
+}
+
+.tw-delay-500 {
+  animation-delay: 500ms;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Height-Aware Scaling for Hero */
+@media (max-height: 800px) {
+  .hero-content-wrapper {
+    transform: scale(0.85);
+    transform-origin: left center;
+  }
+}
+
+@media (max-height: 700px) {
+  .hero-content-wrapper {
+    transform: scale(0.75);
+    transform-origin: left center;
+  }
+}
+
+@media (max-height: 600px) {
+  .hero-content-wrapper {
+    transform: scale(0.65);
+    transform-origin: left center;
+  }
+}
