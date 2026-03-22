@@ -86,6 +86,37 @@ function Portfolio() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // --- BROWSER HISTORY MANAGEMENT (BACK BUTTON TO CLOSE OVERLAYS) ---
+  const isAnyOverlayOpen = !!(selectedProject || activeSkill || activeExperience || activeEducation || isContactOpen);
+
+  // 1. Listen for back button (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      if (isAnyOverlayOpen) {
+        handleCloseOverlay();
+        setIsContactOpen(false);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isAnyOverlayOpen]);
+
+  // 2. Push state when an overlay is opened
+  useEffect(() => {
+    if (isAnyOverlayOpen) {
+      // Only push if we aren't already in an overlay state
+      if (window.history.state?.type !== 'overlay') {
+        window.history.pushState({ type: 'overlay' }, '');
+      }
+    } else {
+      // If we closed an overlay manually (not via back button) and we are STILL in an overlay state,
+      // we might want to go back in history to sync.
+      if (window.history.state?.type === 'overlay') {
+        window.history.back();
+      }
+    }
+  }, [isAnyOverlayOpen]);
+
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
   const scrollToSection = (sectionId) => {

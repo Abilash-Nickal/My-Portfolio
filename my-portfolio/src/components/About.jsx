@@ -38,7 +38,7 @@ Currently serving as a Student Researcher at the University of Colombo and previ
               }`}
           >
             <img
-              src={profile.imageUrl}
+              src={profile.imageUrl_about || profile.imageUrl}
               alt={profile.heading}
               className="rounded-2xl w-full h-auto object-cover aspect-[4/5] grayscale hover:grayscale-0 transition-all duration-500"
             />

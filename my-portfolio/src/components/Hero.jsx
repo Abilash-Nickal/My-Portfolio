@@ -22,7 +22,7 @@ const Hero = ({ isLightMode, onContactClick, profileData, shortcuts = [], onSele
                 }`}
             />
             <img
-              src={profileData?.imageUrl || "me.jpg"}
+              src={profileData?.imageUrl_hero || profileData?.imageUrl || "me.jpg"}
               alt="Profile"
               className="w-full h-full object-cover rounded-full relative z-10 bg-gray-100"
             />
@@ -38,9 +38,9 @@ const Hero = ({ isLightMode, onContactClick, profileData, shortcuts = [], onSele
                 className={`font-black ${isLightMode ? "text-gray-900" : "text-white"
                   }`}
               >
-                {profileData?.name || "Abilashan"}
+                {profileData?.name || "Abilashan  "}
               </strong>
-              I design and build intelligent systems—from precision CAD modeling and industrial automation to modern web applications.
+              -- I design and build intelligent systems — from precision CAD modeling and industrial automation to modern web applications.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <button
@@ -103,8 +103,8 @@ const Hero = ({ isLightMode, onContactClick, profileData, shortcuts = [], onSele
                         }
                       }}
                       className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all hover:-translate-y-1 hover:scale-110 ${isLightMode
-                          ? "bg-white/50 border-black/5 hover:border-orange-500/50 hover:shadow-[0_0_15px_rgba(249,115,22,0.15)] shadow-sm"
-                          : "bg-white/5 border-white/5 hover:border-cyan-400/50 hover:shadow-[0_0_15px_rgba(34,211,238,0.15)] shadow-xl"
+                        ? "bg-white/50 border-black/5 hover:border-orange-500/50 hover:shadow-[0_0_15px_rgba(249,115,22,0.15)] shadow-sm"
+                        : "bg-white/5 border-white/5 hover:border-cyan-400/50 hover:shadow-[0_0_15px_rgba(34,211,238,0.15)] shadow-xl"
                         }`}
                     >
                       {s.logoUrl ? (

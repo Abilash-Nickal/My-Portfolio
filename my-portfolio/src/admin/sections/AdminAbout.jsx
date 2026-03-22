@@ -91,11 +91,11 @@ const AdminAbout = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold tracking-widest uppercase mb-1.5 text-white/40">Profile Image (URL)</label>
+              <label className="block text-xs font-bold tracking-widest uppercase mb-1.5 text-white/40">Header Avatar (URL)</label>
               <div className="flex items-center gap-4">
                 {form.imageUrl ? (
                   <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-white/10 bg-black/50 flex-shrink-0">
-                    <img src={form.imageUrl.startsWith("http") ? form.imageUrl : window.location.origin + form.imageUrl} alt="Profile preview" className="w-full h-full object-cover" />
+                    <img src={form.imageUrl.startsWith("http") ? form.imageUrl : window.location.origin + form.imageUrl} alt="Header preview" className="w-full h-full object-cover" />
                   </div>
                 ) : (
                   <div className="w-16 h-16 rounded-xl border border-dashed border-white/20 flex items-center justify-center bg-black/20 text-white/20 flex-shrink-0">
@@ -107,9 +107,55 @@ const AdminAbout = () => {
                   type="text"
                   value={form.imageUrl}
                   onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
-                  placeholder="https://imgur.com/your-image.jpg or /profile.jpg"
+                  placeholder="e.g. /profile.jpg"
                   className="flex-1 w-full px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm"
                   required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold tracking-widest uppercase mb-1.5 text-white/40">Hero Section Image (URL)</label>
+              <div className="flex items-center gap-4">
+                {form.imageUrl_hero ? (
+                  <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-white/10 bg-black/50 flex-shrink-0">
+                    <img src={form.imageUrl_hero.startsWith("http") ? form.imageUrl_hero : window.location.origin + form.imageUrl_hero} alt="Hero preview" className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-16 h-16 rounded-xl border border-dashed border-white/20 flex items-center justify-center bg-black/20 text-white/20 flex-shrink-0">
+                    <ImageIcon size={20} />
+                  </div>
+                )}
+                
+                <input
+                  type="text"
+                  value={form.imageUrl_hero || ""}
+                  onChange={(e) => setForm((f) => ({ ...f, imageUrl_hero: e.target.value }))}
+                  placeholder="Optional unique hero image"
+                  className="flex-1 w-full px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold tracking-widest uppercase mb-1.5 text-white/40">About Section Image (URL)</label>
+              <div className="flex items-center gap-4">
+                {form.imageUrl_about ? (
+                  <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-white/10 bg-black/50 flex-shrink-0">
+                    <img src={form.imageUrl_about.startsWith("http") ? form.imageUrl_about : window.location.origin + form.imageUrl_about} alt="About preview" className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-16 h-16 rounded-xl border border-dashed border-white/20 flex items-center justify-center bg-black/20 text-white/20 flex-shrink-0">
+                    <ImageIcon size={20} />
+                  </div>
+                )}
+                
+                <input
+                  type="text"
+                  value={form.imageUrl_about || ""}
+                  onChange={(e) => setForm((f) => ({ ...f, imageUrl_about: e.target.value }))}
+                  placeholder="Optional unique about image"
+                  className="flex-1 w-full px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm"
                 />
               </div>
             </div>
