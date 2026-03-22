@@ -3,7 +3,7 @@ import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp
 import { db } from "../../firebase";
 import { Plus, Pencil, Trash2, X, Save, Loader2, Image as ImageIcon, Zap } from "lucide-react";
 
-const emptyForm = { title: "", category: "", tech: "", desc: "", link: "", youtubeUrl: "", imageUrls: [""], skills: [], order: 0, associationLogoUrl: "" };
+const emptyForm = { title: "", category: "", tech: "", desc: "", github: "", link: "", youtubeUrl: "", imageUrls: [""], skills: [], order: 0, associationLogoUrl: "" };
 
 const AdminProjects = () => {
   const [projects, setProjects] = useState([]);
@@ -55,6 +55,7 @@ const AdminProjects = () => {
       category: p.category,
       tech: p.tech,
       desc: p.desc,
+      github: p.github || "",
       link: p.link || "",
       youtubeUrl: p.youtubeUrl || "",
       imageUrls: p.imageUrls || (p.imageUrl ? [p.imageUrl] : [""]),
@@ -94,6 +95,7 @@ const AdminProjects = () => {
         category: form.category,
         tech: form.tech,
         desc: form.desc,
+        github: form.github,
         link: form.link,
         youtubeUrl: form.youtubeUrl,
         imageUrls: cleanImageUrls,
@@ -176,6 +178,7 @@ const AdminProjects = () => {
                   { key: "title", label: "Title", placeholder: "My Awesome Project" },
                   { key: "tech", label: "Tech Stack", placeholder: "React • Node.js • Firebase" },
                   { key: "link", label: "Live Link (optional)", placeholder: "https://..." },
+                  { key: "github", label: "Source Code (GitHub) Link (optional)", placeholder: "https://github.com/..." },
                   { key: "youtubeUrl", label: "YouTube Video Link (optional)", placeholder: "https://youtube.com/watch?v=..." },
                   { key: "order", label: "Display Order", placeholder: "0", type: "number" },
                   { key: "associationLogoUrl", label: "Association Logo URL (Company/Org)", placeholder: "https://..." },
