@@ -40,8 +40,7 @@ const Hero = ({ isLightMode, onContactClick, profileData, shortcuts = [], onSele
               >
                 {profileData?.name || "Abilashan"}
               </strong>
-              . I specialize in building highly-performant, accessible, and
-              human-centered digital products.
+              I design and build intelligent systems—from precision CAD modeling and industrial automation to modern web applications.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <button
@@ -103,11 +102,10 @@ const Hero = ({ isLightMode, onContactClick, profileData, shortcuts = [], onSele
                           onSelectProject(s.projectId);
                         }
                       }}
-                      className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all hover:-translate-y-1 hover:scale-110 ${
-                        isLightMode
+                      className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all hover:-translate-y-1 hover:scale-110 ${isLightMode
                           ? "bg-white/50 border-black/5 hover:border-orange-500/50 hover:shadow-[0_0_15px_rgba(249,115,22,0.15)] shadow-sm"
                           : "bg-white/5 border-white/5 hover:border-cyan-400/50 hover:shadow-[0_0_15px_rgba(34,211,238,0.15)] shadow-xl"
-                      }`}
+                        }`}
                     >
                       {s.logoUrl ? (
                         <img src={s.logoUrl} alt={s.title} className="w-6 h-6 object-contain" />

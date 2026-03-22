@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 
 const phrases = [
-  { top: "SOLVING", middle: "design", bottom: "PROBLEMS" },
-  { top: "CRAFTING", middle: "digital", bottom: "EXPERIENCES" },
-  { top: "BUILDING", middle: "web", bottom: "SOLUTIONS" },
+  { top: "ENGINEERING", middle: "smart", bottom: "AUTOMATION" },
+  { top: "DESIGNING", middle: "robotic", bottom: "SYSTEMS" },
+  { top: "BUILDING", middle: "physical & digital", bottom: "SOLUTIONS" },
+  { top: "CRAFTING", middle: "industrial", bottom: "INNOVATION" }
 ];
 
 const GhostTypingProfile = ({ isLightMode }) => {
@@ -58,25 +59,22 @@ const GhostTypingProfile = ({ isLightMode }) => {
       ? current.bottom.substring(0, subIndex - topLen - midLen)
       : "";
 
-  const cursorClass = `${
-    isLightMode ? "text-orange-500" : "text-cyan-400"
-  } ${blink ? "opacity-100" : "opacity-0"}`;
+  const cursorClass = `${isLightMode ? "text-orange-500" : "text-cyan-400"
+    } ${blink ? "opacity-100" : "opacity-0"}`;
 
   return (
     <h1
-      className={`text-5xl sm:text-7xl lg:text-9xl font-black leading-[0.8] tracking-tighter mix-blend-difference min-h-[200px] md:min-h-[250px] ${
-        isLightMode ? "text-gray-900" : "text-white"
-      }`}
+      className={`text-5xl sm:text-7xl lg:text-9xl font-black leading-[0.8] tracking-tighter mix-blend-difference min-h-[200px] md:min-h-[250px] ${isLightMode ? "text-gray-900" : "text-white"
+        }`}
     >
       {dispTop}
       {subIndex <= topLen && <span className={cursorClass}>|</span>}
       <br />
       <span
-        className={`font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r lowercase text-6xl sm:text-8xl lg:text-[11rem] ml-8 sm:ml-16 drop-shadow-lg ${
-          isLightMode
-            ? "from-orange-400 via-orange-500 to-red-500"
-            : "from-sky-400 via-cyan-400 to-emerald-400"
-        }`}
+        className={`font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r lowercase text-6xl sm:text-8xl lg:text-[11rem] ml-8 sm:ml-16 drop-shadow-lg ${isLightMode
+          ? "from-orange-400 via-orange-500 to-red-500"
+          : "from-sky-400 via-cyan-400 to-emerald-400"
+          }`}
       >
         {dispMid}
       </span>

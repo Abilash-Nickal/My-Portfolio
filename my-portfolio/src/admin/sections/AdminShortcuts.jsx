@@ -75,9 +75,15 @@ const AdminShortcuts = () => {
   };
 
   const handleDelete = async (s) => {
-    if (!window.confirm("Delete this shortcut?")) return;
-    await deleteDoc(doc(db, "shortcuts", s.id));
-    setShortcuts((prev) => prev.filter((item) => item.id !== s.id));
+    try {
+      console.log("HandleDelete called for:", s.id, s.title);
+      // Removed confirm for verification
+      await deleteDoc(doc(db, "shortcuts", s.id));
+      console.log("DeleteDoc call finished");
+      setShortcuts((prev) => prev.filter((item) => item.id !== s.id));
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
   };
 
   return (
