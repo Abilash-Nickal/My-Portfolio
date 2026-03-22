@@ -42,39 +42,40 @@ function Portfolio() {
   // Fetch projects and skills for linking
   useEffect(() => {
     const fetchData = async () => {
+      // Fetch Projects
       try {
-        // Fetch Projects
         const projSnap = await getDocs(collection(db, 'projects'));
         const projectsData = projSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
-
-        // Sort in-memory to avoid needing composite indexes in Firestore
         const sortedProjects = projectsData.sort((a, b) => {
           const orderA = a.order ?? 0;
           const orderB = b.order ?? 0;
           if (orderA !== orderB) return orderA - orderB;
-
-          // Fallback to createdAt if order is same
           const dateA = a.createdAt?.toDate?.() || new Date(0);
           const dateB = b.createdAt?.toDate?.() || new Date(0);
           return dateB - dateA;
         });
         setAllProjects(sortedProjects);
+      } catch (err) { console.error("Projects fetch failed:", err); }
 
-        // Fetch Skills
+      // Fetch Skills
+      try {
         const skillSnap = await getDocs(collection(db, 'skills'));
         setAllSkills(skillSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      } catch (err) { console.error("Skills fetch failed:", err); }
 
+      // Fetch Profile
+      try {
         const profSnap = await getDocs(collection(db, 'profile'));
         const mainProf = profSnap.docs.find(d => d.id === 'main')?.data();
         if (mainProf) setProfileData(mainProf);
+      } catch (err) { console.error("Profile fetch failed:", err); }
 
-        // Fetch Shortcuts
+      // Fetch Shortcuts
+      try {
         const shortcutSnap = await getDocs(collection(db, 'shortcuts'));
         const shortcutsData = shortcutSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
         setAllShortcuts(shortcutsData.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
-      } catch (err) {
-        console.error("Fetch failed:", err);
-      }
+      } catch (err) { console.error("Shortcuts fetch failed:", err); }
     };
     fetchData();
   }, []);
