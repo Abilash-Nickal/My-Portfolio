@@ -9,6 +9,7 @@ import AdminMessages from "./sections/AdminMessages";
 import AdminGallery from "./sections/AdminGallery";
 import AdminAbout from "./sections/AdminAbout";
 import AdminSkills from "./sections/AdminSkills";
+import AdminShortcuts from "./sections/AdminShortcuts";
 import { FolderKanban, Briefcase, GraduationCap, MessageSquare, Image as ImageIcon, LogOut, ChevronRight, UserCircle, Zap } from "lucide-react";
 
 const tabs = [
@@ -18,6 +19,7 @@ const tabs = [
   { id: "experience", label: "Experience", icon: Briefcase },
   { id: "education", label: "Education", icon: GraduationCap },
   { id: "gallery", label: "Gallery", icon: ImageIcon },
+  { id: "shortcuts", label: "Shortcuts", icon: Zap },
   { id: "messages", label: "Messages", icon: MessageSquare },
 ];
 
@@ -38,6 +40,7 @@ const AdminDashboard = () => {
       case "experience": return <AdminExperience />;
       case "education": return <AdminEducation />;
       case "gallery": return <AdminGallery />;
+      case "shortcuts": return <AdminShortcuts />;
       case "messages": return <AdminMessages />;
       default: return null;
     }

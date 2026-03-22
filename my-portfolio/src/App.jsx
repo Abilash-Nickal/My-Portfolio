@@ -21,6 +21,7 @@ import Footer from './components/Footer';
 import AdminLogin from './admin/AdminLogin';
 import AdminDashboard from './admin/AdminDashboard';
 import ProtectedRoute from './admin/ProtectedRoute';
+import ProjectShortcuts from './components/ProjectShortcuts';
 import { useAuthState } from './hooks/useAuthState';
 
 function Portfolio() {
@@ -33,9 +34,10 @@ function Portfolio() {
   const [isLightMode, setIsLightMode] = useState(false);
   const [formSubmitAnimState, setFormSubmitAnimState] = useState('idle');
   const [isContactOpen, setIsContactOpen] = useState(false);
-  const [allProjects, setAllProjects] = useState([]);
   const [allSkills, setAllSkills] = useState([]);
   const [profileData, setProfileData] = useState(null);
+  const [allProjects, setAllProjects] = useState([]);
+  const [allShortcuts, setAllShortcuts] = useState([]);
 
   // Fetch projects and skills for linking
   useEffect(() => {
@@ -62,10 +64,14 @@ function Portfolio() {
         const skillSnap = await getDocs(collection(db, 'skills'));
         setAllSkills(skillSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
 
-        // Fetch Profile
         const profSnap = await getDocs(collection(db, 'profile'));
         const mainProf = profSnap.docs.find(d => d.id === 'main')?.data();
         if (mainProf) setProfileData(mainProf);
+
+        // Fetch Shortcuts
+        const shortcutSnap = await getDocs(collection(db, 'shortcuts'));
+        const shortcutsData = shortcutSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        setAllShortcuts(shortcutsData.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
       } catch (err) {
         console.error("Fetch failed:", err);
       }
@@ -192,7 +198,7 @@ function Portfolio() {
         />
 
         <main className={`relative z-10 pt-10 transition-all duration-1000 ${(activeSkill || selectedProject || activeExperience || activeEducation) ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`}>
-          <Hero isLightMode={isLightMode} onContactClick={() => setIsContactOpen(true)} profileData={profileData} />
+          <Hero isLightMode={isLightMode} onContactClick={() => setIsContactOpen(true)} profileData={profileData} shortcuts={allShortcuts} onSelectProject={setSelectedProject} />
           <About isLightMode={isLightMode} profileData={profileData} />
           <Skills onSelectSkill={setActiveSkill} isLightMode={isLightMode} skills={allSkills} />
           <Experience isLightMode={isLightMode} onSelectExperience={setActiveExperience} />
@@ -214,6 +220,8 @@ function Portfolio() {
             </button>
           </section>
         </main>
+
+        <ProjectShortcuts shortcuts={allShortcuts} isLightMode={isLightMode} onSelectProject={setSelectedProject} />
 
         <Footer isLightMode={isLightMode} />
       </div>

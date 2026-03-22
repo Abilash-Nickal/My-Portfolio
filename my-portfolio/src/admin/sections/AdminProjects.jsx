@@ -3,7 +3,7 @@ import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp
 import { db } from "../../firebase";
 import { Plus, Pencil, Trash2, X, Save, Loader2, Image as ImageIcon, Zap } from "lucide-react";
 
-const emptyForm = { title: "", category: "", tech: "", desc: "", link: "", imageUrls: [""], skills: [], order: 0 };
+const emptyForm = { title: "", category: "", tech: "", desc: "", link: "", youtubeUrl: "", imageUrls: [""], skills: [], order: 0, associationLogoUrl: "" };
 
 const AdminProjects = () => {
   const [projects, setProjects] = useState([]);
@@ -56,9 +56,11 @@ const AdminProjects = () => {
       tech: p.tech,
       desc: p.desc,
       link: p.link || "",
+      youtubeUrl: p.youtubeUrl || "",
       imageUrls: p.imageUrls || (p.imageUrl ? [p.imageUrl] : [""]),
       skills: p.skills || [],
       order: p.order || 0,
+      associationLogoUrl: p.associationLogoUrl || "",
     });
     setEditingId(p.id);
     setFormOpen(true);
@@ -73,6 +75,15 @@ const AdminProjects = () => {
     }));
   };
 
+  const toggleCategory = (cat) => {
+    const currentCats = form.category ? form.category.split(',').map(s => s.trim()).filter(Boolean) : [];
+    const newCats = currentCats.includes(cat) 
+      ? currentCats.filter(c => c !== cat)
+      : [...currentCats, cat];
+    setForm(f => ({ ...f, category: newCats.join(', ') }));
+  };
+
+
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -84,9 +95,11 @@ const AdminProjects = () => {
         tech: form.tech,
         desc: form.desc,
         link: form.link,
+        youtubeUrl: form.youtubeUrl,
         imageUrls: cleanImageUrls,
         skills: form.skills,
         order: Number(form.order) || 0,
+        associationLogoUrl: form.associationLogoUrl,
       };
       if (editingId) {
         await updateDoc(doc(db, "projects", editingId), { ...projectDataToSave, updatedAt: serverTimestamp() });
@@ -124,8 +137,12 @@ const AdminProjects = () => {
           {projects.map((p) => (
             <div key={p.id} className="bg-white/[0.03] border border-white/5 rounded-2xl p-5 flex items-start justify-between gap-4 hover:border-cyan-400/20 transition-all">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-mono uppercase text-cyan-400 tracking-widest">{p.category}</span>
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  {p.category?.split(',').map((cat, idx) => (
+                    <span key={idx} className="text-[10px] font-mono uppercase text-cyan-400 tracking-widest bg-cyan-400/10 px-2 py-0.5 rounded-md border border-cyan-400/20">
+                      {cat.trim()}
+                    </span>
+                  ))}
                   {p.skills && p.skills.length > 0 && (
                     <span className="flex items-center gap-1 text-[10px] text-emerald-400/60 font-mono">
                       <Zap size={10} />{p.skills.length} skill{p.skills.length !== 1 ? "s" : ""}
@@ -157,10 +174,11 @@ const AdminProjects = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
                   { key: "title", label: "Title", placeholder: "My Awesome Project" },
-                  { key: "category", label: "Category", placeholder: "UX/UI & Frontend" },
                   { key: "tech", label: "Tech Stack", placeholder: "React • Node.js • Firebase" },
                   { key: "link", label: "Live Link (optional)", placeholder: "https://..." },
+                  { key: "youtubeUrl", label: "YouTube Video Link (optional)", placeholder: "https://youtube.com/watch?v=..." },
                   { key: "order", label: "Display Order", placeholder: "0", type: "number" },
+                  { key: "associationLogoUrl", label: "Association Logo URL (Company/Org)", placeholder: "https://..." },
                 ].map(({ key, label, placeholder, type = "text" }) => (
                   <div key={key}>
                     <label className="block text-xs font-bold tracking-widest uppercase mb-1.5 text-white/40">{label}</label>
@@ -174,6 +192,33 @@ const AdminProjects = () => {
                   </div>
                 ))}
               </div>
+
+              {/* Enhanced Category Picker */}
+              <div>
+                <label className="block text-xs font-bold tracking-widest uppercase mb-1.5 text-white/40">Categories (Click to toggle or type above)</label>
+                <input
+                  type="text"
+                  value={form.category}
+                  onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                  placeholder="UX/UI, Frontend, React"
+                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm mb-3"
+                />
+                <div className="flex flex-wrap gap-2 p-3 bg-white/5 rounded-xl border border-white/10 max-h-32 overflow-y-auto no-scrollbar">
+                  {[...new Set(["Frontend", "Backend", "Fullstack", "UX/UI", "Mobile", ...projects.flatMap(p => p.category ? p.category.split(',').map(s => s.trim()) : [])])].filter(Boolean).sort().map(cat => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => toggleCategory(cat)}
+                      className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-all ${form.category?.split(',').map(s => s.trim()).includes(cat) 
+                        ? "bg-cyan-500 border-cyan-500 text-black shadow-[0_0_10px_rgba(34,211,238,0.3)]" 
+                        : "bg-white/5 border-white/10 text-white/40 hover:border-cyan-500/50 hover:text-white"}`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
 
               <div>
                 <label className="block text-xs font-bold tracking-widest uppercase mb-1.5 text-white/40">Description</label>

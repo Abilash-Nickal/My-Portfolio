@@ -1,7 +1,7 @@
 import { Github, Linkedin, ArrowDown, Download } from "lucide-react";
 import GhostTypingProfile from "./GhostTypingProfile";
 
-const Hero = ({ isLightMode, onContactClick, profileData }) => {
+const Hero = ({ isLightMode, onContactClick, profileData, shortcuts = [], onSelectProject }) => {
   return (
     <section
       id="profile"
@@ -86,6 +86,40 @@ const Hero = ({ isLightMode, onContactClick, profileData }) => {
               >
                 <Linkedin size={16} /> LinkedIn
               </a>
+
+              {/* Shortcuts icons */}
+              {shortcuts.length > 0 && (
+                <div className="flex flex-wrap items-center gap-3 pl-4 border-l border-white/10 ml-2">
+                  {shortcuts.map((s) => (
+                    <a
+                      key={s.id}
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={s.title}
+                      onClick={(e) => {
+                        if (s.projectId) {
+                          e.preventDefault();
+                          onSelectProject(s.projectId);
+                        }
+                      }}
+                      className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all hover:-translate-y-1 hover:scale-110 ${
+                        isLightMode
+                          ? "bg-white/50 border-black/5 hover:border-orange-500/50 hover:shadow-[0_0_15px_rgba(249,115,22,0.15)] shadow-sm"
+                          : "bg-white/5 border-white/5 hover:border-cyan-400/50 hover:shadow-[0_0_15px_rgba(34,211,238,0.15)] shadow-xl"
+                      }`}
+                    >
+                      {s.logoUrl ? (
+                        <img src={s.logoUrl} alt={s.title} className="w-6 h-6 object-contain" />
+                      ) : (
+                        <span className={`text-[10px] font-black uppercase ${isLightMode ? 'text-gray-400' : 'text-white/20'}`}>
+                          {s.title.substring(0, 2)}
+                        </span>
+                      )}
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

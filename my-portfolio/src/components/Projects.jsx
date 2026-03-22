@@ -105,8 +105,15 @@ const Projects = ({ isLightMode, onSelectProject, projects = [] }) => {
                   >
                     {cat.trim()}
                   </div>
-                )).slice(0, 3)}
+                )).slice(0, activeFilter === "All" ? 1 : undefined)}
               </div>
+
+              {/* Association Logo - Top Right */}
+              {project.associationLogoUrl && (
+                <div className="absolute top-4 right-4 z-20 w-15 h-15 rounded-lg overflow-hidden border border-white/10 bg-black/20 flex items-center justify-center backdrop-blur-sm p-1">
+                  <img src={project.associationLogoUrl} alt="Associate" className="w-full h-full object-contain" />
+                </div>
+              )}
 
               {project.imageUrl || project.imageUrls?.[0] ? (
                 <div className={`rounded-2xl aspect-video border overflow-hidden flex items-center justify-center relative mb-6 ${isLightMode ? "border-black/10 text-gray-400 group-hover:shadow-[0_0_30px_rgba(249,115,22,0.15)]" : "border-white/5 text-white/20 group-hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]"
@@ -136,26 +143,17 @@ const Projects = ({ isLightMode, onSelectProject, projects = [] }) => {
                 >
                   {project.title}
                 </h4>
-                <div
-                  className={`font-mono text-[10px] tracking-widest uppercase mb-6 pb-3 border-b ${isLightMode
-                    ? "text-gray-400 border-black/5"
-                    : "text-white/40 border-white/5"
+                <p
+                  className={`text-xs leading-relaxed mb-6 line-clamp-2 ${isLightMode ? "text-gray-600" : "text-gray-400"
                     }`}
                 >
-                  <div className="mb-1">Tech Stack:</div>
-                  <span
-                    className={
-                      isLightMode ? "text-gray-700 font-bold" : "text-white/80 font-bold"
-                    }
-                  >
-                    {project.tech}
-                  </span>
-                </div>
+                  {project.desc}
+                </p>
                 <button
                   className={`flex items-center gap-2 font-black text-[10px] tracking-widest uppercase group-hover:gap-3 transition-all mt-auto ${isLightMode ? "text-orange-500" : "text-cyan-400"
                     }`}
                 >
-                  View Case Study <ArrowRight size={14} />
+                  Read More <ArrowRight size={14} />
                 </button>
               </div>
             </div>

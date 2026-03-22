@@ -39,6 +39,19 @@ const ProjectDetailOverlay = ({ project, onClose, isLightMode, allSkills = [], o
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   }, [images.length]);
 
+  // Helper to extract YouTube ID and return embed URL
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11)
+      ? `https://www.youtube.com/embed/${match[2]}?autoplay=0&rel=0`
+      : null;
+  };
+
+  const embedUrl = useMemo(() => getYouTubeEmbedUrl(project?.youtubeUrl), [project?.youtubeUrl]);
+
+
   // --- AUTO-PLAY SLIDER LOGIC ---
   useEffect(() => {
     if (!project || isPaused || images.length <= 1) return;
@@ -63,64 +76,81 @@ const ProjectDetailOverlay = ({ project, onClose, isLightMode, allSkills = [], o
       {/* Main Overlay Container - Scrollable on mobile */}
       <div className="fixed inset-0 z-[101] overflow-y-auto no-scrollbar flex flex-col md:flex-row pointer-events-none">
         
-        {/* Media Panel (Slider) - Shown first on mobile */}
+        {/* Media Panel (Video + Slider) - Shown first on mobile */}
         <div
-          className="relative w-full md:w-[45%] h-[50vh] md:h-screen flex justify-center items-center pointer-events-auto overflow-hidden tw-fade-in tw-delay-300 order-1 flex-shrink-0"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
+          className="relative w-full md:w-[45%] h-screen flex flex-col pointer-events-auto overflow-hidden tw-fade-in tw-delay-300 order-1 flex-shrink-0"
         >
-          <div className={`absolute inset-0 ${isLightMode ? 'bg-gray-100' : 'bg-[#05040a]'}`}>
-
-            {/* Main Image Display */}
-            <div className="absolute inset-0 w-full h-full">
-              <img
-                key={currentImageIndex} // Forces re-render for animation
-                src={images[currentImageIndex]}
-                alt={`${project.title} screenshot ${currentImageIndex + 1}`}
-                className="w-full h-full object-cover tw-fade-in"
+          {/* YouTube Video Section (Top) */}
+          {embedUrl && (
+            <div className={`relative w-full ${images.length > 0 ? 'h-[45%]' : 'h-full'} border-b border-white/10`}>
+              <iframe
+                src={embedUrl}
+                title={`${project.title} Demo`}
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
               />
             </div>
+          )}
 
-            {/* Flipped gradient direction to blend into the right panel */}
-            <div className={`absolute inset-0 z-10 bg-gradient-to-t md:bg-gradient-to-l opacity-80 pointer-events-none ${isLightMode ? 'from-white via-transparent to-transparent' : 'from-[#0B0914] via-transparent to-transparent'}`} />
-
-            {/* Slider Controls (Only show if >1 image) */}
-            {images.length > 1 && (
-              <div className="absolute inset-0 z-20 flex flex-col justify-between p-8 pointer-events-none">
-                {/* Vertical center arrows */}
-                <div className="flex-grow flex items-center justify-between w-full px-2 md:px-8">
-                  <button
-                    onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                    className={`pointer-events-auto p-2 md:p-3 rounded-full backdrop-blur-md border transition-all hover:scale-110 ${isLightMode ? 'bg-white/50 border-white hover:bg-white text-black' : 'bg-black/50 border-white/10 hover:bg-black text-white'
-                      }`}
-                  >
-                    <ChevronLeft size={20} className="md:w-6 md:h-6" />
-                  </button>
-
-                  <button
-                    onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                    className={`pointer-events-auto p-2 md:p-3 rounded-full backdrop-blur-md border transition-all hover:scale-110 ${isLightMode ? 'bg-white/50 border-white hover:bg-white text-black' : 'bg-black/50 border-white/10 hover:bg-black text-white'
-                      }`}
-                  >
-                    <ChevronRight size={20} className="md:w-6 md:h-6" />
-                  </button>
-                </div>
-
-                {/* Bottom Dots Navigation */}
-                <div className="flex justify-center gap-2 md:gap-3 pb-4 md:pb-10 pointer-events-auto">
-                  {images.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentImageIndex(idx)}
-                      className={`h-1.5 md:h-2 transition-all rounded-full ${currentImageIndex === idx
-                        ? `w-6 md:w-8 ${isLightMode ? 'bg-orange-500' : 'bg-cyan-400'}`
-                        : `w-1.5 md:w-2 ${isLightMode ? 'bg-black/30 hover:bg-black/50' : 'bg-white/30 hover:bg-white/50'}`
-                        }`}
-                    />
-                  ))}
-                </div>
+          {/* Image Slider Section (Bottom or Full) */}
+          <div
+            className={`relative w-full ${embedUrl ? 'flex-grow' : 'h-full'} flex justify-center items-center overflow-hidden`}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <div className={`absolute inset-0 ${isLightMode ? 'bg-gray-100' : 'bg-[#05040a]'}`}>
+              {/* Main Image Display */}
+              <div className="absolute inset-0 w-full h-full">
+                <img
+                  key={currentImageIndex} // Forces re-render for animation
+                  src={images[currentImageIndex]}
+                  alt={`${project.title} screenshot ${currentImageIndex + 1}`}
+                  className="w-full h-full object-cover tw-fade-in"
+                />
               </div>
-            )}
+
+              {/* Flipped gradient direction to blend into the right panel */}
+              <div className={`absolute inset-0 z-10 bg-gradient-to-t md:bg-gradient-to-l opacity-80 pointer-events-none ${isLightMode ? 'from-white via-transparent to-transparent' : 'from-[#0B0914] via-transparent to-transparent'}`} />
+
+              {/* Slider Controls (Only show if >1 image) */}
+              {images.length > 1 && (
+                <div className="absolute inset-0 z-20 flex flex-col justify-between p-4 md:p-8 pointer-events-none">
+                  {/* Vertical center arrows */}
+                  <div className="flex-grow flex items-center justify-between w-full px-2">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                      className={`pointer-events-auto p-2 rounded-full backdrop-blur-md border transition-all hover:scale-110 ${isLightMode ? 'bg-white/50 border-white hover:bg-white text-black' : 'bg-black/50 border-white/10 hover:bg-black text-white'
+                        }`}
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+
+                    <button
+                      onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                      className={`pointer-events-auto p-2 rounded-full backdrop-blur-md border transition-all hover:scale-110 ${isLightMode ? 'bg-white/50 border-white hover:bg-white text-black' : 'bg-black/50 border-white/10 hover:bg-black text-white'
+                        }`}
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </div>
+
+                  {/* Bottom Dots Navigation */}
+                  <div className="flex justify-center gap-2 pb-2 pointer-events-auto">
+                    {images.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentImageIndex(idx)}
+                        className={`h-1.5 transition-all rounded-full ${currentImageIndex === idx
+                          ? `w-6 ${isLightMode ? 'bg-orange-500' : 'bg-cyan-400'}`
+                          : `w-1.5 ${isLightMode ? 'bg-black/30 hover:bg-black/50' : 'bg-white/30 hover:bg-white/50'}`
+                          }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
