@@ -9,10 +9,10 @@ const Skills = ({ onSelectSkill, isLightMode, skills = [] }) => {
   const row2Skills = skills?.slice(third, 2 * third) || [];
   const row3Skills = skills?.slice(2 * third) || [];
 
-  // Triple the arrays so the loop is seamless
-  const tripledRow1 = [...row1Skills, ...row1Skills, ...row1Skills];
-  const tripledRow2 = [...row2Skills, ...row2Skills, ...row2Skills];
-  const tripledRow3 = [...row3Skills, ...row3Skills, ...row3Skills];
+  // Double the arrays and use -50% translation for a perfect seamless infinite loop
+  const doubledRow1 = [...row1Skills, ...row1Skills];
+  const doubledRow2 = [...row2Skills, ...row2Skills];
+  const doubledRow3 = [...row3Skills, ...row3Skills];
 
   return (
     <section id="skills" className="py-32 relative overflow-hidden">
@@ -43,105 +43,108 @@ const Skills = ({ onSelectSkill, isLightMode, skills = [] }) => {
 
       {/* Infinite horizontal marquee - Row 1 (Left) */}
       <div className="w-full overflow-hidden mb-6">
-        <div className="flex gap-4 md:gap-6 animate-scroll-left w-max">
-          {tripledRow1.map((skill, idx) => (
-            <button
-              key={`r1-${skill.id}-${idx}`}
-              onClick={() => onSelectSkill(skill)}
-              className={`border rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center gap-4 md:gap-6 transition-all duration-300 group flex-shrink-0 w-40 md:w-56 ${
-                isLightMode
-                  ? "bg-white border-black/5 hover:border-orange-500/50 hover:bg-gray-50 hover:shadow-[0_0_30px_rgba(249,115,22,0.15)]"
-                  : "bg-[#0f0c18] border-white/10 hover:border-cyan-500/50 hover:bg-white/[0.05] hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]"
-              }`}
-            >
-              <img
-                src={skill.iconUrl}
-                alt={skill.name}
-                className="w-12 h-12 md:w-16 md:h-16 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 drop-shadow-md"
-              />
-              <div className="text-center">
-                <h4
-                  className={`font-bold text-sm md:text-md leading-tight mb-1 md:mb-2 ${
-                    isLightMode ? "text-gray-900" : "text-white"
-                  }`}
-                >
-                  {skill.name}
-                </h4>
-                <p className="text-gray-500 text-[10px] tracking-widest uppercase">
-                  {skill.sub}
-                </p>
-              </div>
-            </button>
+        <div className="flex animate-scroll-left w-max">
+          {doubledRow1.map((skill, idx) => (
+            <div key={`r1-${skill.id}-${idx}`} className="px-3">
+              <button
+                onClick={() => onSelectSkill(skill)}
+                className={`border rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center gap-4 md:gap-6 transition-all duration-300 group flex-shrink-0 w-40 md:w-56 ${
+                  isLightMode
+                    ? "bg-white border-black/5 hover:border-orange-500/50 hover:bg-gray-50 hover:shadow-[0_0_30px_rgba(249,115,22,0.15)]"
+                    : "bg-[#0f0c18] border-white/10 hover:border-cyan-500/50 hover:bg-white/[0.05] hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]"
+                }`}
+              >
+                <img
+                  src={skill.iconUrl}
+                  alt={skill.name}
+                  className="w-12 h-12 md:w-16 md:h-16 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 drop-shadow-md"
+                />
+                <div className="text-center">
+                  <h4
+                    className={`font-bold text-sm md:text-md leading-tight mb-1 md:mb-2 ${
+                      isLightMode ? "text-gray-900" : "text-white"
+                    }`}
+                  >
+                    {skill.name}
+                  </h4>
+                  <p className="text-gray-500 text-[10px] tracking-widest uppercase">
+                    {skill.sub}
+                  </p>
+                </div>
+              </button>
+            </div>
           ))}
         </div>
       </div>
 
       {/* Infinite horizontal marquee - Row 2 (Right) */}
       <div className="w-full overflow-hidden mb-6">
-        <div className="flex gap-4 md:gap-6 animate-scroll-right w-max">
-          {tripledRow2.map((skill, idx) => (
-            <button
-              key={`r2-${skill.id}-${idx}`}
-              onClick={() => onSelectSkill(skill)}
-              className={`border rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center gap-4 md:gap-6 transition-all duration-300 group flex-shrink-0 w-40 md:w-56 ${
-                isLightMode
-                  ? "bg-white border-black/5 hover:border-orange-500/50 hover:bg-gray-50 hover:shadow-[0_0_30px_rgba(249,115,22,0.15)]"
-                  : "bg-[#0f0c18] border-white/10 hover:border-cyan-500/50 hover:bg-white/[0.05] hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]"
-              }`}
-            >
-              <img
-                src={skill.iconUrl}
-                alt={skill.name}
-                className="w-12 h-12 md:w-16 md:h-16 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 drop-shadow-md"
-              />
-              <div className="text-center">
-                <h4
-                  className={`font-bold text-sm md:text-md leading-tight mb-1 md:mb-2 ${
-                    isLightMode ? "text-gray-900" : "text-white"
-                  }`}
-                >
-                  {skill.name}
-                </h4>
-                <p className="text-gray-500 text-[10px] tracking-widest uppercase">
-                  {skill.sub}
-                </p>
-              </div>
-            </button>
+        <div className="flex animate-scroll-right w-max">
+          {doubledRow2.map((skill, idx) => (
+            <div key={`r2-${skill.id}-${idx}`} className="px-3">
+              <button
+                onClick={() => onSelectSkill(skill)}
+                className={`border rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center gap-4 md:gap-6 transition-all duration-300 group flex-shrink-0 w-40 md:w-56 ${
+                  isLightMode
+                    ? "bg-white border-black/5 hover:border-orange-500/50 hover:bg-gray-50 hover:shadow-[0_0_30px_rgba(249,115,22,0.15)]"
+                    : "bg-[#0f0c18] border-white/10 hover:border-cyan-500/50 hover:bg-white/[0.05] hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]"
+                }`}
+              >
+                <img
+                  src={skill.iconUrl}
+                  alt={skill.name}
+                  className="w-12 h-12 md:w-16 md:h-16 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 drop-shadow-md"
+                />
+                <div className="text-center">
+                  <h4
+                    className={`font-bold text-sm md:text-md leading-tight mb-1 md:mb-2 ${
+                      isLightMode ? "text-gray-900" : "text-white"
+                    }`}
+                  >
+                    {skill.name}
+                  </h4>
+                  <p className="text-gray-500 text-[10px] tracking-widest uppercase">
+                    {skill.sub}
+                  </p>
+                </div>
+              </button>
+            </div>
           ))}
         </div>
       </div>
 
       {/* Infinite horizontal marquee - Row 3 (Left) */}
       <div className="w-full overflow-hidden">
-        <div className="flex gap-4 md:gap-6 animate-scroll-left w-max">
-          {tripledRow3.map((skill, idx) => (
-            <button
-              key={`r3-${skill.id}-${idx}`}
-              onClick={() => onSelectSkill(skill)}
-              className={`border rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center gap-4 md:gap-6 transition-all duration-300 group flex-shrink-0 w-40 md:w-56 ${
-                isLightMode
-                  ? "bg-white border-black/5 hover:border-orange-500/50 hover:bg-gray-50 hover:shadow-[0_0_30px_rgba(249,115,22,0.15)]"
-                  : "bg-[#0f0c18] border-white/10 hover:border-cyan-500/50 hover:bg-white/[0.05] hover:shadow-[0_0_30_30px_rgba(34,211,238,0.15)]"
-              }`}
-            >
-              <img
-                src={skill.iconUrl}
-                alt={skill.name}
-                className="w-12 h-12 md:w-16 md:h-16 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 drop-shadow-md"
-              />
-              <div className="text-center">
-                <h4
-                  className={`font-bold text-sm md:text-md leading-tight mb-1 md:mb-2 ${
-                    isLightMode ? "text-gray-900" : "text-white"
-                  }`}
-                >
-                  {skill.name}
-                </h4>
-                <p className="text-gray-500 text-[10px] tracking-widest uppercase">
-                  {skill.sub}
-                </p>
-              </div>
-            </button>
+        <div className="flex animate-scroll-left w-max">
+          {doubledRow3.map((skill, idx) => (
+            <div key={`r3-${skill.id}-${idx}`} className="px-3">
+              <button
+                onClick={() => onSelectSkill(skill)}
+                className={`border rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center gap-4 md:gap-6 transition-all duration-300 group flex-shrink-0 w-40 md:w-56 ${
+                  isLightMode
+                    ? "bg-white border-black/5 hover:border-orange-500/50 hover:bg-gray-50 hover:shadow-[0_0_30px_rgba(249,115,22,0.15)]"
+                    : "bg-[#0f0c18] border-white/10 hover:border-cyan-500/50 hover:bg-white/[0.05] hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]"
+                }`}
+              >
+                <img
+                  src={skill.iconUrl}
+                  alt={skill.name}
+                  className="w-12 h-12 md:w-16 md:h-16 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 drop-shadow-md"
+                />
+                <div className="text-center">
+                  <h4
+                    className={`font-bold text-sm md:text-md leading-tight mb-1 md:mb-2 ${
+                      isLightMode ? "text-gray-900" : "text-white"
+                    }`}
+                  >
+                    {skill.name}
+                  </h4>
+                  <p className="text-gray-500 text-[10px] tracking-widest uppercase">
+                    {skill.sub}
+                  </p>
+                </div>
+              </button>
+            </div>
           ))}
         </div>
       </div>

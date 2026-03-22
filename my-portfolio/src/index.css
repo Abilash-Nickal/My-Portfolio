@@ -55,13 +55,13 @@ body {
   }
 
   100% {
-    transform: translateX(-33.333%);
+    transform: translateX(-50%);
   }
 }
 
 @keyframes scroll-right {
   0% {
-    transform: translateX(-33.333%);
+    transform: translateX(-50%);
   }
 
   100% {
@@ -70,11 +70,11 @@ body {
 }
 
 .animate-scroll-left {
-  animation: scroll-left 25s linear infinite;
+  animation: scroll-left 15s linear infinite;
 }
 
 .animate-scroll-right {
-  animation: scroll-right 25s linear infinite;
+  animation: scroll-right 15s linear infinite;
 }
 
 .pause-on-hover:hover .animate-scroll-left,
