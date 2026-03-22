@@ -12,8 +12,9 @@ const InteractiveParticles = ({ isLightMode }) => {
 
         let particles = [];
         // INCREASED: Particle count (from 60 to 150)
-        const particleCount = 70;
-        const mouse = { x: null, y: null, radius: 200 };
+        const isMobile = window.innerWidth < 768;
+        const particleCount = isMobile ? 35 : 70;
+        const mouse = { x: null, y: null, radius: isMobile ? 100 : 200 };
 
         const resize = () => {
             canvas.width = window.innerWidth;
