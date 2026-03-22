@@ -67,5 +67,26 @@ The application follows a standard React component hierarchy.
 
 ---
 
-**Generated on:** March 18, 2026
-**Version:** 1.2.0 (Final Deployment Sync)
+### 7. Recent UI/UX Evolution (March 20, 2026 - Present)
+
+#### 7.1 Project Detail Overlay Restructure
+The project detail view was transformed from a static popup into a professional, two-pane interactive interface:
+- **Dual-Pane Layout**: Main content (description/tech) on the left, sticky action sidebar on the right.
+- **Structured Content Parser**: Implemented `formatDescription` to convert raw text into styled HTML (bold headers, bullet points, justified paragraphs).
+- **Sticky Actions**: Moved Live Demo and Source buttons to a sidebar that remains visible during scroll (`lg:sticky`).
+- **Visual Refinement**: Removed "side shadow" gradients for a cleaner edge-to-edge look.
+
+#### 7.2 Browser History & Navigation Fix
+Resolved the common SPA issue where the back button exits the application:
+- **State Synchronization**: Integrated `window.history.pushState` and `window.history.popstate`.
+- **Back-to-Close Logic**: Opening any overlay pushes a temporary state to the history stack. Pressing 'Back' triggers a state pop that closes the overlay instead of navigating away.
+
+#### 7.3 Multi-Profile Image Management
+Added flexibility to the Admin Ecosystem for branding:
+- **Three-Image Architecture**: Separate fields for **Header Avatar**, **Hero Section Image**, and **About Section Image**.
+- **Fallback Logic**: Implemented intelligent defaults where the Hero/About sections automatically inherit the Header Avatar if specific images aren't provided.
+
+---
+
+**Generated on:** March 22, 2026
+**Version:** 1.5.0 (Enhanced Navigation & UI)
