@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "abilash-portfolio-5601e"
+  },
+  "targets": {
+    "abilash-portfolio-5601e": {
+      "hosting": {
+        "main-site": [
+          "abilash-portfolio-5601e"
+        ],
+        "new-site": [
+          "arumugam-abilashan"
+        ]
+      }
+    }
   }
 }
