@@ -7,6 +7,8 @@ const AdminGallery = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newImageUrl, setNewImageUrl] = useState("");
+  const [newVideoUrl, setNewVideoUrl] = useState("");
+  const [newTag, setNewTag] = useState("");
   const [saving, setSaving] = useState(false);
 
   const fetchImages = async () => {
@@ -27,13 +29,17 @@ const AdminGallery = () => {
     try {
       await addDoc(collection(db, "gallery"), {
         url: newImageUrl,
+        videoUrl: newVideoUrl.trim() || null,
+        tag: newTag.trim() || null,
         createdAt: serverTimestamp()
       });
       setNewImageUrl("");
+      setNewVideoUrl("");
+      setNewTag("");
       fetchImages();
     } catch (error) {
-      console.error("Failed to add image:", error);
-      alert("Failed to add image.");
+      console.error("Failed to add gallery item:", error);
+      alert("Failed to add gallery item.");
     } finally {
       setSaving(false);
     }
@@ -56,26 +62,44 @@ const AdminGallery = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <p className="text-white/40 text-sm whitespace-nowrap">{images.length} image{images.length !== 1 ? "s" : ""}</p>
         
-        <form onSubmit={handleAddImage} className="flex flex-1 max-w-lg gap-2">
-          <input
-            type="url"
-            value={newImageUrl}
-            onChange={(e) => setNewImageUrl(e.target.value)}
-            placeholder="Image URL (e.g. from Imgur)"
-            className="flex-1 px-4 py-2 bg-black/30 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm"
-            required
-          />
-          <button 
-            type="submit"
-            disabled={saving}
-            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-black text-xs uppercase tracking-widest rounded-xl hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all disabled:opacity-60 whitespace-nowrap"
-          >
-            {saving ? (
-              <><Loader2 size={16} className="animate-spin" /> Saving...</>
-            ) : (
-              <><Plus size={16} /> Add to Gallery</>
-            )}
-          </button>
+        <form onSubmit={handleAddImage} className="flex flex-col flex-1 max-w-2xl gap-3">
+          <div className="flex gap-2">
+            <input
+              type="url"
+              value={newImageUrl}
+              onChange={(e) => setNewImageUrl(e.target.value)}
+              placeholder="Image URL (e.g. from Imgur)"
+              className="flex-1 px-4 py-2 bg-black/30 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm"
+              required
+            />
+            <input
+              type="text"
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              placeholder="Custom Tag (Optional)"
+              className="w-40 px-4 py-2 bg-black/30 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm"
+            />
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="url"
+              value={newVideoUrl}
+              onChange={(e) => setNewVideoUrl(e.target.value)}
+              placeholder="Video URL (Optional, Youtube/MP4)"
+              className="flex-1 px-4 py-2 bg-black/30 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm"
+            />
+            <button 
+              type="submit"
+              disabled={saving}
+              className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-black text-xs uppercase tracking-widest rounded-xl hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all disabled:opacity-60 whitespace-nowrap"
+            >
+              {saving ? (
+                <><Loader2 size={16} className="animate-spin" /> Saving...</>
+              ) : (
+                <><Plus size={16} /> Add to Gallery</>
+              )}
+            </button>
+          </div>
         </form>
       </div>
 
@@ -96,6 +120,20 @@ const AdminGallery = () => {
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 loading="lazy"
               />
+              
+              <div className="absolute top-2 left-2 flex gap-1">
+                {img.tag && (
+                  <span className="px-2 py-0.5 bg-black/60 backdrop-blur-md border border-white/10 rounded-full text-[10px] text-white/70 uppercase tracking-tighter">
+                    {img.tag}
+                  </span>
+                )}
+                {img.videoUrl && (
+                  <span className="p-1 bg-cyan-500/80 backdrop-blur-md rounded-full text-black">
+                    <Play size={10} fill="currentColor" />
+                  </span>
+                )}
+              </div>
+
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                 <button 
                   onClick={() => handleDelete(img)}

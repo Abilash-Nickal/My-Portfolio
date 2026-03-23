@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../firebase";
 
+import { Play } from "lucide-react";
+
 const GalleryRow = ({ images, direction, isLightMode }) => {
   // Double the images and use -50% translation for a perfect seamless infinite loop
   const doubled = [...images, ...images];
@@ -19,6 +21,20 @@ const GalleryRow = ({ images, direction, isLightMode }) => {
                 : "bg-[#0B0914] border-white/10"
             }`}
           >
+            {img.videoUrl ? (
+              <a 
+                href={img.videoUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="absolute inset-0 z-20 cursor-pointer"
+                title="Watch Video"
+              >
+                <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md p-2 rounded-full border border-white/20 text-white group-hover:bg-cyan-500 group-hover:text-black transition-all">
+                  <Play size={16} fill="currentColor" />
+                </div>
+              </a>
+            ) : null}
+
             <div
               className={`absolute inset-0 bg-gradient-to-t z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6 ${
                 isLightMode
@@ -31,11 +47,11 @@ const GalleryRow = ({ images, direction, isLightMode }) => {
                   isLightMode ? "text-gray-900" : "text-white"
                 }`}
               >
-                {direction === "left" ? "Project View" : "Interface"}
+                {img.tag || (direction === "left" ? "Project View" : "Interface")}
               </span>
             </div>
             <img
-              src={img}
+              src={img.url}
               alt="Gallery Item"
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100"
               loading="lazy"
@@ -59,7 +75,10 @@ const ImageGallery = ({ isLightMode }) => {
     try {
       const q = query(collection(db, "gallery"), orderBy("createdAt", "desc"));
       const snap = await getDocs(q);
-      const firestoreImages = snap.docs.map(d => d.data().url);
+      const firestoreImages = snap.docs.map(d => ({
+        id: d.id,
+        ...d.data()
+      }));
       allImages = [...firestoreImages];
     } catch (err) {
       console.error("Failed to load Firestore images", err);
@@ -77,10 +96,16 @@ const ImageGallery = ({ isLightMode }) => {
         // Filter for images only
         const gitHubImages = data
           .filter(file => /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file.name))
-          .map(file => file.download_url);
+          .map(file => ({
+            url: file.download_url,
+            tag: null,
+            videoUrl: null
+          }));
         
-        // Combine with firestore images, avoiding duplicates
-        allImages = [...new Set([...allImages, ...gitHubImages])];
+        // Combine with firestore images, avoiding duplicates by URL
+        const existingUrls = new Set(allImages.map(img => img.url));
+        const uniqueGitHubImages = gitHubImages.filter(img => !existingUrls.has(img.url));
+        allImages = [...allImages, ...uniqueGitHubImages];
       }
     } catch (err) {
       console.error("Failed to load GitHub gallery images", err);
