@@ -26,8 +26,9 @@ const AdminLogin = () => {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-    } catch {
-      setError("Google sign-in failed. Please try again.");
+    } catch (err) {
+      console.error("Google login error:", err);
+      setError(err.message || "Google sign-in failed. Please try again.");
     } finally {
       setGoogleLoading(false);
     }
@@ -39,8 +40,9 @@ const AdminLogin = () => {
     setError(null);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-    } catch {
-      setError("Invalid credentials. Please try again.");
+    } catch (err) {
+      console.error("Email login error:", err);
+      setError(err.message || "Invalid credentials. Please try again.");
     } finally {
       setLoading(false);
     }
