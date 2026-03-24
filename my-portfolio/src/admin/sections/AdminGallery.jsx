@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { collection, getDocs, addDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from "firebase/firestore";
 import { db } from "../../firebase";
-import { Plus, Trash2, Loader2, Image as ImageIcon } from "lucide-react";
+import { Plus, Trash2, Loader2, Image as ImageIcon, Play } from "lucide-react";
 
 const AdminGallery = () => {
   const [images, setImages] = useState([]);
