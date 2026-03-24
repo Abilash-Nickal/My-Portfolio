@@ -22,9 +22,9 @@ const Experience = ({ isLightMode, onSelectExperience }) => {
   return (
     <section
       id="experience"
-      className="py-32 max-w-[var(--content-max-width)] mx-auto px-6 sm:px-8 lg:px-12"
+      className="py-20 max-w-[var(--content-max-width)] mx-auto px-6 sm:px-8 lg:px-12"
     >
-      <div className="mb-20">
+      <div className="mb-12">
         <h2
           className={`text-xs font-black tracking-[0.4em] uppercase mb-4 block ${isLightMode ? "text-gray-400" : "text-white/30"
             }`}

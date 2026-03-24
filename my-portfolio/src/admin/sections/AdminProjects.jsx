@@ -13,6 +13,7 @@ const AdminProjects = () => {
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [isFullDescOpen, setIsFullDescOpen] = useState(false);
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -224,13 +225,78 @@ const AdminProjects = () => {
 
 
               <div>
-                <label className="block text-xs font-bold tracking-widest uppercase mb-1.5 text-white/40">Description</label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center gap-3">
+                    <label className="block text-xs font-bold tracking-widest uppercase text-white/40">Description</label>
+                    <button
+                      type="button"
+                      onClick={() => setIsFullDescOpen(true)}
+                      className="flex items-center gap-1.5 px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 rounded-lg text-cyan-400 text-[10px] font-black uppercase tracking-widest hover:bg-cyan-400/20 transition-all"
+                    >
+                      <Zap size={12} /> Write Detailed Description
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        const textarea = document.getElementById("project-desc");
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const text = form.desc;
+                        const before = text.substring(0, start);
+                        const after = text.substring(end);
+                        const selected = text.substring(start, end) || "Subheading";
+                        const newText = before + "### " + selected + after;
+                        setForm(f => ({ ...f, desc: newText }));
+                      }}
+                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-white/5 border border-white/10 text-white/40 hover:text-cyan-400 hover:border-cyan-400/30 transition-all"
+                    >
+                      Subhead
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        const textarea = document.getElementById("project-desc");
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const text = form.desc;
+                        const before = text.substring(0, start);
+                        const after = text.substring(end);
+                        const selected = text.substring(start, end) || "bold text";
+                        const newText = before + "**" + selected + "**" + after;
+                        setForm(f => ({ ...f, desc: newText }));
+                      }}
+                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-white/5 border border-white/10 text-white/40 hover:text-orange-400 hover:border-orange-400/30 transition-all"
+                    >
+                      Bold
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        const textarea = document.getElementById("project-desc");
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const text = form.desc;
+                        const before = text.substring(0, start);
+                        const after = text.substring(end);
+                        const selected = text.substring(start, end) || "List item";
+                        const newText = before + "- " + selected + after;
+                        setForm(f => ({ ...f, desc: newText }));
+                      }}
+                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-white/5 border border-white/10 text-white/40 hover:text-emerald-400 hover:border-emerald-400/30 transition-all"
+                    >
+                      List
+                    </button>
+                  </div>
+                </div>
                 <textarea
+                  id="project-desc"
                   value={form.desc}
                   onChange={(e) => setForm((f) => ({ ...f, desc: e.target.value }))}
-                  placeholder="Describe the project..."
-                  rows={3}
-                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm resize-none"
+                  placeholder="Describe the project... Use ### for subheadings, **bold** for bold, or - for bullets."
+                  rows={6}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm resize-none leading-relaxed"
                 />
               </div>
 
@@ -313,6 +379,102 @@ const AdminProjects = () => {
                 {saving ? <><Loader2 size={18} className="animate-spin" /> Saving...</> : <><Save size={18} /> Save Project</>}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Full Screen Description Editor Overlay */}
+      {isFullDescOpen && (
+        <div className="fixed inset-0 z-[100] bg-[#0B0914] flex flex-col p-6 animate-in fade-in zoom-in duration-300">
+          <div className="max-w-5xl mx-auto w-full h-full flex flex-col">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-cyan-400/10 flex items-center justify-center text-cyan-400">
+                  <Pencil size={20} />
+                </div>
+                <div>
+                  <h2 className="text-white font-black text-xl tracking-tight uppercase">Detailed Project Description</h2>
+                  <p className="text-white/40 text-[10px] font-mono tracking-widest uppercase mt-0.5">Editing Content</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                {/* Re-use toolbar in full screen */}
+                <div className="hidden sm:flex gap-2 mr-4">
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        const textarea = document.getElementById("full-desc");
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const text = form.desc;
+                        const before = text.substring(0, start);
+                        const after = text.substring(end);
+                        const selected = text.substring(start, end) || "Subheading";
+                        const newText = before + "### " + selected + after;
+                        setForm(f => ({ ...f, desc: newText }));
+                      }}
+                      className="text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-cyan-400 hover:border-cyan-400/30 transition-all"
+                    >
+                      Subhead
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        const textarea = document.getElementById("full-desc");
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const text = form.desc;
+                        const before = text.substring(0, start);
+                        const after = text.substring(end);
+                        const selected = text.substring(start, end) || "bold text";
+                        const newText = before + "**" + selected + "**" + after;
+                        setForm(f => ({ ...f, desc: newText }));
+                      }}
+                      className="text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-orange-400 hover:border-orange-400/30 transition-all"
+                    >
+                      Bold
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        const textarea = document.getElementById("full-desc");
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const text = form.desc;
+                        const before = text.substring(0, start);
+                        const after = text.substring(end);
+                        const selected = text.substring(start, end) || "List item";
+                        const newText = before + "- " + selected + after;
+                        setForm(f => ({ ...f, desc: newText }));
+                      }}
+                      className="text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-emerald-400 hover:border-emerald-400/30 transition-all"
+                    >
+                      List
+                    </button>
+                </div>
+                <button
+                  onClick={() => setIsFullDescOpen(false)}
+                  className="px-6 py-2.5 bg-cyan-400 text-black font-black text-xs uppercase tracking-widest rounded-xl hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+
+            <textarea
+              id="full-desc"
+              value={form.desc}
+              onChange={(e) => setForm((f) => ({ ...f, desc: e.target.value }))}
+              placeholder="Describe the project in detail... Use the toolbar above for formatting."
+              className="flex-1 w-full bg-white/[0.02] border border-white/5 rounded-3xl p-8 text-white text-lg placeholder-white/5 focus:outline-none focus:border-cyan-400/20 transition-all resize-none leading-relaxed no-scrollbar shadow-inner"
+            />
+
+            <div className="mt-6 flex justify-between items-center text-[10px] font-mono tracking-widest text-white/20 uppercase">
+              <div className="flex gap-6">
+                <span>{form.desc?.length || 0} Characters</span>
+                <span>{form.desc?.split(/\s+/).filter(Boolean).length || 0} Words</span>
+              </div>
+              <p>Tips: Use `###` for subheadings, `**bold**` for focus.</p>
+            </div>
           </div>
         </div>
       )}

@@ -4,45 +4,53 @@ import { Github, Linkedin, Mail } from "lucide-react";
 const Footer = ({ isLightMode }) => {
   return (
     <footer
-      className={`relative py-8 md:py-10 border-t text-center z-20 overflow-hidden transition-all duration-500 ${isLightMode
-          ? "bg-gray-50 border-orange-500/20 shadow-[0_-10px_40px_-10px_rgba(249,115,22,0.15)]"
-          : "bg-[#06050A] border-cyan-500/20 shadow-[0_-10px_40px_-10px_rgba(34,211,238,0.1)]"
+      className={`relative py-4 md:py-6 border-t text-center z-20 overflow-hidden transition-all duration-500 ${isLightMode
+        ? "bg-gray-50 border-orange-500/20 shadow-[0_-10px_40px_-10px_rgba(249,115,22,0.15)]"
+        : "bg-[#06050A] border-cyan-500/20 shadow-[0_-10px_40px_-10px_rgba(34,211,238,0.1)]"
         }`}
     >
       {/* Neon Aura Backgrounds */}
       <div
-        className={`absolute -bottom-1/2 left-0 w-[60%] h-[150px] blur-[80px] pointer-events-none rounded-full ${isLightMode
-            ? "bg-orange-500/30 mix-blend-multiply"
-            : "bg-cyan-500/20 mix-blend-screen"
+        className={`absolute -bottom-1/2 left-0 w-[60%] h-[100px] blur-[80px] pointer-events-none rounded-full ${isLightMode
+          ? "bg-orange-500/30 mix-blend-multiply"
+          : "bg-cyan-500/20 mix-blend-screen"
           }`}
       />
       <div
-        className={`absolute -bottom-1/2 right-0 w-[60%] h-[150px] blur-[80px] pointer-events-none rounded-full ${isLightMode
-            ? "bg-red-500/30 mix-blend-multiply"
-            : "bg-blue-600/30 mix-blend-screen"
+        className={`absolute -bottom-1/2 right-0 w-[60%] h-[100px] blur-[80px] pointer-events-none rounded-full ${isLightMode
+          ? "bg-red-500/30 mix-blend-multiply"
+          : "bg-blue-600/30 mix-blend-screen"
           }`}
       />
 
       {/* Glowing Neon Text */}
       <p
-        className={`font-black text-2xl md:text-3xl tracking-[0.2em] leading-none select-none relative z-10 transition-all duration-500 ${isLightMode
-            ? "text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 drop-shadow-[0_0_15px_rgba(249,115,22,0.6)]"
-            : "text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-[0_0_15px_rgba(34,211,238,0.6)]"
+        className={`font-black text-xl md:text-2xl tracking-[0.2em] leading-none select-none relative z-10 transition-all duration-500 ${isLightMode
+          ? "text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 drop-shadow-[0_0_15px_rgba(249,115,22,0.6)]"
+          : "text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-[0_0_15px_rgba(34,211,238,0.6)]"
           }`}
       >
-        ABILASHAN
+        ARUMUGAM ABILASHAN
       </p>
 
-      <p
-        className={`font-mono text-[10px] tracking-widest mt-4 relative z-10 ${isLightMode ? "text-gray-500" : "text-white/50"
-          }`}
-      >
-        &copy; {new Date().getFullYear()} ALL RIGHTS RESERVED
-      </p>
+      {/* Updated Footer Row: Admin (Left) | Copyright (Center) | Socials (Right) */}
+      <div className="max-w-[var(--content-max-width)] mx-auto px-6 sm:px-8 lg:px-12 mt-6 relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+        <Link
+          to="/admin"
+          className={`font-mono text-[9px] tracking-widest uppercase transition-colors flex-shrink-0 order-3 md:order-1 ${isLightMode ? "text-gray-300 hover:text-orange-400" : "text-white/10 hover:text-white/30"
+            }`}
+        >
+          ⚙ Admin Panel
+        </Link>
 
-      {/* Admin & Social Links Row */}
-      <div className="flex flex-col items-center gap-4 mt-6 relative z-10">
-        <div className="flex items-center gap-6">
+        <p
+          className={`font-mono text-[10px] tracking-widest relative z-10 order-1 md:order-2 ${isLightMode ? "text-gray-500" : "text-white/50"
+            }`}
+        >
+          &copy; {new Date().getFullYear()} ALL RIGHTS RESERVED
+        </p>
+
+        <div className="flex items-center gap-6 order-2 md:order-3">
           <a
             href="https://github.com/Abilash-Nickal"
             target="_blank"
@@ -66,15 +74,6 @@ const Footer = ({ isLightMode }) => {
             <Mail size={18} />
           </a>
         </div>
-        
-        <Link
-          to="/admin"
-          className={`font-mono text-[9px] tracking-widest uppercase transition-colors ${
-            isLightMode ? "text-gray-300 hover:text-orange-400" : "text-white/10 hover:text-white/30"
-          }`}
-        >
-          ⚙ Admin Panel
-        </Link>
       </div>
     </footer>
   );

@@ -21,7 +21,7 @@ Currently serving as a Student Researcher at the University of Colombo and previ
   return (
     <section
       id="about"
-      className="py-32 max-w-[var(--content-max-width)] mx-auto px-6 sm:px-8 lg:px-12 relative z-10"
+      className="py-20 max-w-[var(--content-max-width)] mx-auto px-6 sm:px-8 lg:px-12 relative z-10"
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div className="relative mx-auto lg:mx-0 max-w-md w-full">

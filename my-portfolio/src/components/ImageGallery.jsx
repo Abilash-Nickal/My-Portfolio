@@ -143,6 +143,23 @@ const ImageGallery = ({ isLightMode }) => {
           : "bg-[#0B0914]/40 border-white/5"
       }`}
     >
+      <div className="max-w-[var(--content-max-width)] mx-auto px-6 sm:px-8 lg:px-12 mb-12 text-center md:text-left">
+        <h2
+          className={`text-xs font-black tracking-[0.4em] uppercase mb-4 block ${
+            isLightMode ? "text-gray-400" : "text-white/30"
+          }`}
+        >
+          Visual Showcase
+        </h2>
+        <h3
+          className={`text-4xl md:text-5xl font-black tracking-tight ${
+            isLightMode ? "text-gray-900" : "text-white"
+          }`}
+        >
+          Project Gallery
+        </h3>
+      </div>
+
       <div className="flex flex-col gap-6 max-w-[100vw] overflow-hidden">
         <div className="w-full overflow-hidden">
           <GalleryRow

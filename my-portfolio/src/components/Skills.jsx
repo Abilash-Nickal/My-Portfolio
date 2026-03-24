@@ -15,8 +15,8 @@ const Skills = ({ onSelectSkill, isLightMode, skills = [] }) => {
   const doubledRow3 = [...row3Skills, ...row3Skills];
 
   return (
-    <section id="skills" className="py-32 relative overflow-hidden">
-      <div className="text-center mb-20 max-w-[var(--content-max-width)] mx-auto px-6 sm:px-8 lg:px-12">
+    <section id="skills" className="py-20 relative overflow-hidden">
+      <div className="text-center mb-12 max-w-[var(--content-max-width)] mx-auto px-6 sm:px-8 lg:px-12">
         <h2
           className={`text-xs font-black tracking-[0.4em] uppercase mb-4 block ${
             isLightMode ? "text-gray-400" : "text-white/30"

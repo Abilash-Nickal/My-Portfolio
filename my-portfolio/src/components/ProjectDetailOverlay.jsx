@@ -10,17 +10,30 @@ const formatDescription = (text, isLightMode) => {
   const lines = text.split('\n');
 
   return lines.map((line, index) => {
+    const trimmedLine = line.trim();
+    
     // 1. Handle empty lines (spacing)
-    if (line.trim() === '') {
+    if (trimmedLine === '') {
       return <div key={index} className="h-4"></div>;
     }
 
-    // 2. Check if the line is a bullet point
-    const isBullet = /^[-*•]\s/.test(line.trim());
-    let content = line.trim();
+    // 2. Check if the line is a subheading (starts with ### )
+    const isSubheading = /^###\s/.test(trimmedLine);
+    if (isSubheading) {
+      const headingContent = trimmedLine.substring(4);
+      return (
+        <h4 key={index} className={`text-lg md:text-xl font-black mt-8 mb-4 uppercase tracking-wider ${isLightMode ? 'text-orange-500 border-b border-black/10 pb-2' : 'text-cyan-400 border-b border-white/10 pb-2'}`}>
+          {headingContent}
+        </h4>
+      );
+    }
+
+    // 3. Check if the line is a bullet point
+    const isBullet = /^[-*•]\s/.test(trimmedLine);
+    let content = trimmedLine;
     if (isBullet) content = content.substring(2);
 
-    // 3. Process **bold** text
+    // 4. Process **bold** text
     const parts = content.split(/(\*\*.*?\*\*)/g);
     const formattedContent = parts.map((part, i) => {
       if (part.startsWith('**') && part.endsWith('**')) {
@@ -38,13 +51,13 @@ const formatDescription = (text, isLightMode) => {
       return (
         <div key={index} className="flex items-start mb-3 ml-2 md:ml-4">
           <span className={`mr-3 mt-2.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${isLightMode ? 'bg-orange-500' : 'bg-cyan-400'}`}></span>
-          <span className="flex-1 leading-relaxed text-justify">{formattedContent}</span>
+          <span className="flex-1 leading-relaxed text-left md:text-justify">{formattedContent}</span>
         </div>
       );
     }
 
     // Render normal paragraph
-    return <p key={index} className="mb-5 leading-relaxed text-justify">{formattedContent}</p>;
+    return <p key={index} className="mb-5 leading-relaxed text-left md:text-justify">{formattedContent}</p>;
   });
 };
 
@@ -123,7 +136,7 @@ const ProjectDetailOverlay = ({ project, onClose, isLightMode, allSkills = [], o
 
         {/* Media Panel (Video + Slider) - Shown first on mobile */}
         <div
-          className="relative w-full md:w-[45%] h-screen flex flex-col pointer-events-auto overflow-hidden tw-fade-in tw-delay-300 order-1 flex-shrink-0"
+          className="relative w-full md:w-[45%] h-[40vh] md:h-screen flex flex-col pointer-events-auto overflow-hidden tw-fade-in tw-delay-300 order-1 flex-shrink-0"
         >
           {/* YouTube Video Section (Top) */}
           {embedUrl && (
@@ -151,7 +164,7 @@ const ProjectDetailOverlay = ({ project, onClose, isLightMode, allSkills = [], o
                   key={currentImageIndex} // Forces re-render for animation
                   src={images[currentImageIndex]}
                   alt={`${project.title} screenshot ${currentImageIndex + 1}`}
-                  className="w-full h-full object-cover tw-fade-in"
+                  className="w-full h-full object-contain md:object-cover tw-fade-in"
                 />
               </div>
 
@@ -204,7 +217,7 @@ const ProjectDetailOverlay = ({ project, onClose, isLightMode, allSkills = [], o
           {/* Close Button */}
           <button
             onClick={onClose}
-            className={`fixed top-8 right-8 md:top-12 md:right-12 lg:top-20 lg:right-20 z-[120] flex flex-row-reverse items-center gap-4 transition-all tracking-[0.2em] uppercase font-black text-[10px] md:text-xs group pointer-events-auto ${isLightMode ? "text-gray-500 hover:text-orange-500" : "text-white/60 hover:text-cyan-400"}`}
+            className={`fixed top-4 right-4 md:top-12 md:right-12 lg:top-20 lg:right-20 z-[120] flex flex-row-reverse items-center gap-4 transition-all tracking-[0.2em] uppercase font-black text-[10px] md:text-xs group pointer-events-auto ${isLightMode ? "text-gray-500 hover:text-orange-500" : "text-white/60 hover:text-cyan-400"}`}
           >
             <span className="hidden sm:inline">Back to Overview</span>
             <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full border flex items-center justify-center transition-colors ${isLightMode ? "border-black/10 bg-white group-hover:border-orange-500" : "border-white/10 bg-[#0B0914] group-hover:border-cyan-400"}`}>

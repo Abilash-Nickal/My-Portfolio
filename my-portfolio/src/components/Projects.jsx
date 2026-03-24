@@ -39,8 +39,8 @@ const Projects = ({ isLightMode, onSelectProject, projects = [] }) => {
   }, [filteredProjects]);
 
   return (
-    <section id="projects" className="py-32">
-      <div className="max-w-[var(--content-max-width)] mx-auto px-6 sm:px-8 lg:px-12 mb-20 text-center md:text-left">
+    <section id="projects" className="py-20">
+      <div className="max-w-[var(--content-max-width)] mx-auto px-6 sm:px-8 lg:px-12 mb-12 text-center md:text-left">
         <h2
           className={`text-xs font-black tracking-[0.4em] uppercase mb-4 block ${isLightMode ? "text-gray-400" : "text-white/30"
             }`}
@@ -82,7 +82,7 @@ const Projects = ({ isLightMode, onSelectProject, projects = [] }) => {
           No projects found for "{activeFilter}".
         </div>
       ) : (
-        <div className="max-w-[var(--content-max-width)] mx-auto px-6 sm:px-8 lg:px-12 mb-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" ref={scrollRef}>
+        <div className="max-w-[var(--content-max-width)] mx-auto px-6 sm:px-8 lg:px-12 mb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" ref={scrollRef}>
           {filteredProjects.map((project, i) => (
             <div
               key={project.id || i}
