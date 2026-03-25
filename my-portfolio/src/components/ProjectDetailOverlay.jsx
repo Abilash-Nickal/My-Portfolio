@@ -65,6 +65,8 @@ const ProjectDetailOverlay = ({ project, onClose, isLightMode, allSkills = [], o
   const [mounted] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(null);
+
 
   // Lock the background body scroll when the modal is open
   useEffect(() => {
@@ -164,8 +166,10 @@ const ProjectDetailOverlay = ({ project, onClose, isLightMode, allSkills = [], o
                   key={currentImageIndex} // Forces re-render for animation
                   src={images[currentImageIndex]}
                   alt={`${project.title} screenshot ${currentImageIndex + 1}`}
-                  className="w-full h-full object-contain md:object-cover tw-fade-in"
+                  className="w-full h-full object-contain md:object-cover tw-fade-in cursor-zoom-in"
+                  onClick={() => setSelectedPreviewIndex(currentImageIndex)}
                 />
+
               </div>
 
 
@@ -231,9 +235,10 @@ const ProjectDetailOverlay = ({ project, onClose, isLightMode, allSkills = [], o
               <span className={`font-mono tracking-widest uppercase text-[10px] md:text-xs mb-4 block ${isLightMode ? "text-orange-500" : "text-cyan-400"}`}>
                 {project?.category}
               </span>
-              <h2 className={`text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase leading-none ${isLightMode ? "text-gray-900" : "text-white"}`}>
+              <h2 className={`text-3xl md:text-5xl lg:text-5xl font-black tracking-tighter uppercase leading-none ${isLightMode ? "text-gray-900" : "text-white"}`}>
                 {project?.title}
               </h2>
+
             </div>
           </div>
 
@@ -241,7 +246,7 @@ const ProjectDetailOverlay = ({ project, onClose, isLightMode, allSkills = [], o
           <div className="flex-grow overflow-y-auto no-scrollbar p-8 md:px-16 lg:px-24">
             <div className="tw-fade-in tw-slide-up tw-delay-500 flex flex-col lg:flex-row gap-12">
               {/* Main Content Column */}
-              <div className="flex-grow max-w-3xl">
+              <div className="flex-grow max-w-4xl">
                 <div className="mb-12">
                   {/* --- APPLIED THE FORMATTER HERE --- */}
                   <div className={`text-base md:text-lg leading-relaxed font-light ${isLightMode ? "text-gray-600" : "text-gray-300"}`}>
@@ -373,7 +378,8 @@ const ProjectDetailOverlay = ({ project, onClose, isLightMode, allSkills = [], o
           @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
           @keyframes slide-up { from { opacity: 0; transform: translateY(2rem); } to { opacity: 1; transform: translateY(0); } }
           @keyframes slide-in-right { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
-          
+          @keyframes zoom-in-95 { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
           .tw-fade-in { animation: fade-in 0.7s ease-out forwards; opacity: 0; }
           .tw-slide-up { animation: slide-up 0.7s ease-out forwards; opacity: 0; }
           .tw-slide-in-right { animation: slide-in-right 0.7s ease-out forwards; opacity: 0; }
@@ -385,9 +391,84 @@ const ProjectDetailOverlay = ({ project, onClose, isLightMode, allSkills = [], o
         `}</style>
         </div>
       </div>
+
+      {/* Full Image Preview Overlay (Matching Gallery Design) */}
+      {selectedPreviewIndex !== null && (
+        <div 
+          className="fixed inset-0 z-[10000] flex items-center justify-center p-4 md:p-10 transition-all duration-500 tw-fade-in"
+          onClick={() => setSelectedPreviewIndex(null)}
+        >
+          {/* Background Overlay */}
+          <div className="absolute inset-0 bg-black/90 backdrop-blur-2xl pointer-events-none" />
+
+          {/* Close Button */}
+          <button 
+            className="absolute top-8 right-8 z-[10010] p-4 bg-white/5 hover:bg-white/10 rounded-full text-white/50 hover:text-white backdrop-blur-md transition-all border border-white/10 group"
+            onClick={() => setSelectedPreviewIndex(null)}
+          >
+            <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+          </button>
+
+          {/* Central Content */}
+          <div className="relative z-[10005] flex items-center justify-center gap-4 md:gap-12 w-full h-full pointer-events-none">
+            {/* Left Button */}
+            {images.length > 1 && (
+              <button 
+                className="p-4 md:p-6 bg-white/5 hover:bg-white/10 rounded-full text-white/40 hover:text-white backdrop-blur-md transition-all border border-white/5 hidden lg:flex items-center justify-center group pointer-events-auto"
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  setSelectedPreviewIndex(prev => prev === 0 ? images.length - 1 : prev - 1); 
+                }}
+              >
+                <ChevronLeft size={24} className="group-hover:-translate-x-1 transition-transform" />
+              </button>
+            )}
+
+            <div 
+              className="relative flex flex-col items-center pointer-events-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+               <div className="relative rounded-2xl md:rounded-3xl border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden bg-white/5 backdrop-blur-sm transition-all duration-700">
+                  <img 
+                    src={images[selectedPreviewIndex]} 
+                    alt="Project Preview" 
+                    className="max-w-[90vw] lg:max-w-6xl max-h-[80vh] object-contain shadow-2xl"
+                    style={{ animation: 'zoom-in-95 0.5s ease-out forwards' }}
+                  />
+               </div>
+               
+               {/* Info Bar */}
+               <div className="mt-6 flex items-center gap-4">
+                  <div className="h-px w-8 bg-white/10" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">
+                    {project.title}
+                  </span>
+                  <span className="text-[10px] font-black text-cyan-400/60 font-mono">
+                    {selectedPreviewIndex + 1} / {images.length}
+                  </span>
+                  <div className="h-px w-8 bg-white/10" />
+               </div>
+            </div>
+
+            {/* Right Button */}
+            {images.length > 1 && (
+              <button 
+                className="p-4 md:p-6 bg-white/5 hover:bg-white/10 rounded-full text-white/40 hover:text-white backdrop-blur-md transition-all border border-white/5 hidden lg:flex items-center justify-center group pointer-events-auto"
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  setSelectedPreviewIndex(prev => (prev + 1) % images.length); 
+                }}
+              >
+                <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>,
     document.body
   );
 };
+
 
 export default ProjectDetailOverlay;
