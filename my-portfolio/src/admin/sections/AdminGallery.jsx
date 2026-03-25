@@ -16,16 +16,17 @@ const AdminGallery = () => {
   const [currentPath, setCurrentPath] = useState("");
 
   const REPO_OWNER = "Abilash-Nickal";
-  const REPO_NAME = "portfolio-images";
+  const REPO_NAME = "My-Portfolio";
 
   const fetchRepoContents = async (path = "") => {
     setRepoLoading(true);
+    const targetPath = path || "portfolio-images";
     try {
-      const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`);
+      const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetPath}`);
       const data = await response.json();
       if (Array.isArray(data)) {
         setRepoImages(data);
-        setCurrentPath(path);
+        setCurrentPath(targetPath);
       }
     } catch (error) {
       console.error("Error fetching repo contents:", error);
@@ -211,16 +212,20 @@ const AdminGallery = () => {
             {/* Breadcrumbs */}
             <div className="flex items-center gap-2 mb-4 overflow-x-auto no-scrollbar pb-2">
               <button 
-                onClick={() => fetchRepoContents("")}
-                className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg transition-all ${!currentPath ? "bg-cyan-400 text-black" : "bg-white/5 text-white/40 hover:text-white"}`}
+                onClick={() => fetchRepoContents("portfolio-images")}
+                className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg transition-all ${currentPath === "portfolio-images" ? "bg-cyan-400 text-black" : "bg-white/5 text-white/40 hover:text-white"}`}
               >
-                Root
+                Images Root
               </button>
-              {currentPath.split('/').filter(Boolean).map((part, i, arr) => (
+              {currentPath.replace("portfolio-images", "").split('/').filter(Boolean).map((part, i, arr) => (
                 <div key={i} className="flex items-center gap-2">
                   <ChevronRight size={12} className="text-white/20" />
                   <button 
-                    onClick={() => fetchRepoContents(arr.slice(0, i + 1).join('/'))}
+                    onClick={() => {
+                      const parts = currentPath.split('/');
+                      const newPath = parts.slice(0, parts.indexOf("portfolio-images") + i + 2).join('/');
+                      fetchRepoContents(newPath);
+                    }}
                     className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg transition-all ${i === arr.length - 1 ? "bg-cyan-400 text-black" : "bg-white/5 text-white/40 hover:text-white"}`}
                   >
                     {part}
