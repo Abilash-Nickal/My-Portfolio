@@ -19,6 +19,8 @@ const AdminProjects = () => {
   const [repoImages, setRepoImages] = useState([]);
   const [currentPath, setCurrentPath] = useState("");
   const [selectedImageSlot, setSelectedImageSlot] = useState(null);
+  const [selectedRepoImages, setSelectedRepoImages] = useState([]); // For multiple selection
+  const [isMultipleSelection, setIsMultipleSelection] = useState(false);
 
   const REPO_OWNER = "Abilash-Nickal";
   const REPO_NAME = "My-Portfolio";
@@ -39,14 +41,24 @@ const AdminProjects = () => {
     setRepoLoading(false);
   };
 
-  const handleSelectFromRepo = (imageUrl) => {
-    if (selectedImageSlot !== null) {
+  const handleSelectFromRepo = (imageUrls) => {
+    const urls = Array.isArray(imageUrls) ? imageUrls : [imageUrls];
+    
+    if (isMultipleSelection) {
+      // Append for showcase images
+      const currentUrls = [...(form.imageUrls || [])].filter(url => url.trim() !== "");
+      setForm((f) => ({ ...f, imageUrls: [...currentUrls, ...urls] }));
+    } else if (selectedImageSlot !== null) {
+      // Single selection for a specific slot
       const newUrls = [...(form.imageUrls || [""])];
-      newUrls[selectedImageSlot] = imageUrl;
+      newUrls[selectedImageSlot] = urls[0];
       setForm((f) => ({ ...f, imageUrls: newUrls }));
-      setRepoPickerOpen(false);
-      setSelectedImageSlot(null);
     }
+    
+    setRepoPickerOpen(false);
+    setSelectedImageSlot(null);
+    setSelectedRepoImages([]);
+    setIsMultipleSelection(false);
   };
 
   const fetchProjects = async () => {
@@ -360,7 +372,20 @@ const AdminProjects = () => {
               <div>
                 <div className="flex items-center justify-between mb-3 text-white/40">
                   <label className="block text-xs font-bold tracking-widest uppercase">Project Images</label>
-                  <span className="text-[10px] font-mono">{form.imageUrls?.length || 0}/10</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMultipleSelection(true);
+                        setRepoPickerOpen(true);
+                        fetchRepoContents("");
+                      }}
+                      className="text-[10px] font-black uppercase tracking-widest text-cyan-400 hover:text-cyan-300 transition-colors"
+                    >
+                      Bulk Select from Repo
+                    </button>
+                    <span className="text-[10px] font-mono">{form.imageUrls?.length || 0}/20</span>
+                  </div>
                 </div>
                 <div className="space-y-2 max-h-48 overflow-y-auto no-scrollbar p-1">
                   {(form.imageUrls || [""]).map((url, index) => (
@@ -409,7 +434,7 @@ const AdminProjects = () => {
                       )}
                     </div>
                   ))}
-                  {(!form.imageUrls || form.imageUrls.length < 10) && (
+                  {(!form.imageUrls || form.imageUrls.length < 20) && (
                     <button
                       type="button"
                       onClick={() => setForm((f) => ({ ...f, imageUrls: [...(f.imageUrls || [""]), ""] }))}
@@ -527,7 +552,7 @@ const AdminProjects = () => {
       {/* GitHub Repo Picker Modal */}
       {repoPickerOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="bg-[#0f0c18] border border-white/10 rounded-3xl p-6 w-full max-w-3xl shadow-2xl max-h-[85vh] flex flex-col">
+          <div className="bg-[#0f0c18] border border-white/10 rounded-3xl p-6 w-full max-w-4xl shadow-2xl max-h-[85vh] flex flex-col">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white">
@@ -538,12 +563,22 @@ const AdminProjects = () => {
                   <p className="text-white/40 text-[10px] font-mono tracking-widest uppercase mt-0.5">{REPO_OWNER}/{REPO_NAME}</p>
                 </div>
               </div>
-              <button 
-                onClick={() => setRepoPickerOpen(false)} 
-                className="p-2 text-white/40 hover:text-white transition-colors bg-white/5 rounded-full"
-              >
-                <X size={20} />
-              </button>
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setRepoPickerOpen(false)} 
+                  className="p-2 text-white/40 hover:text-white transition-colors bg-white/5 rounded-full"
+                >
+                  <X size={20} />
+                </button>
+                {isMultipleSelection && selectedRepoImages.length > 0 && (
+                  <button
+                    onClick={() => handleSelectFromRepo(selectedRepoImages)}
+                    className="px-6 py-2 bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-black text-xs uppercase tracking-widest rounded-xl hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all flex items-center gap-2"
+                  >
+                    Confirm Selection ({selectedRepoImages.length})
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Breadcrumbs */}
@@ -592,10 +627,18 @@ const AdminProjects = () => {
                             fetchRepoContents(item.path);
                           } else {
                             const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`;
-                            handleSelectFromRepo(rawUrl);
+                            if (isMultipleSelection) {
+                              setSelectedRepoImages(prev => 
+                                prev.includes(rawUrl) 
+                                  ? prev.filter(url => url !== rawUrl) 
+                                  : [...prev, rawUrl]
+                              );
+                            } else {
+                              handleSelectFromRepo([rawUrl]);
+                            }
                           }
                         }}
-                        className="group flex flex-col items-center gap-3 p-3 rounded-2xl hover:bg-white/5 transition-all text-center border border-transparent hover:border-white/10"
+                        className={`group flex flex-col items-center gap-3 p-3 rounded-2xl transition-all text-center border ${isMultipleSelection && selectedRepoImages.includes(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`) ? "bg-cyan-400/10 border-cyan-400/40" : "hover:bg-white/5 border-transparent hover:border-white/10"}`}
                       >
                         <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center">
                           {isDir ? (
@@ -604,12 +647,17 @@ const AdminProjects = () => {
                             <img 
                               src={item.download_url} 
                               alt={item.name} 
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                              className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ${(isMultipleSelection && selectedRepoImages.includes(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`)) ? "opacity-50" : ""}`} 
                             />
                           )}
-                          <div className="absolute inset-0 bg-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <div className={`absolute inset-0 transition-opacity flex items-center justify-center ${(isMultipleSelection && selectedRepoImages.includes(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`)) ? "bg-cyan-400/40 opacity-100" : "bg-cyan-400/20 opacity-0 group-hover:opacity-100"}`}>
                             {isDir ? <ChevronRight size={24} className="text-white" /> : <Check size={24} className="text-white" />}
                           </div>
+                          {isMultipleSelection && !isDir && (
+                            <div className={`absolute top-2 right-2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${selectedRepoImages.includes(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`) ? "bg-cyan-400 border-cyan-400 scale-110" : "bg-black/50 border-white/40"}`}>
+                              {selectedRepoImages.includes(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`) && <Check size={12} className="text-black" strokeWidth={4} />}
+                            </div>
+                          )}
                         </div>
                         <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white truncate w-full px-1">
                           {item.name}
