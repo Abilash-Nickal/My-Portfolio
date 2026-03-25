@@ -88,5 +88,14 @@ Added flexibility to the Admin Ecosystem for branding:
 
 ---
 
-**Generated on:** March 22, 2026
-**Version:** 1.5.0 (Enhanced Navigation & UI)
+#### 7.4 Bulletproof JSDelivr Architecture (March 25, 2026)
+Successfully transitioned the image fetching mechanism from the GitHub REST API to a high-performance JSDelivr CDN + Static Manifest system:
+- **Rate Limit Resolution**: Eliminated the 60 requests/hour limit for public visitors by using CDN-cached manifests.
+- **Instant Admin Browsing**: Implemented recursive manifest parsing for near-instant folder navigation in the Admin panel.
+- **Maintenance Script**: Added `generate-manifests.cjs` to automate the creation of image maps for the repository.
+- **Performance**: Leveraged JSDelivr's global edge network for faster image delivery.
+
+---
+
+**Generated on:** March 25, 2026
+**Version:** 1.6.0 (Bulletproof CDN Architecture)

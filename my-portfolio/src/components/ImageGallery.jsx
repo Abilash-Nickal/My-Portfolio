@@ -2,20 +2,21 @@ import { useState, useEffect } from "react";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../firebase";
 
-import { Play } from "lucide-react";
+import { Play, X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 
-const GalleryRow = ({ images, direction, isLightMode }) => {
+const GalleryRow = ({ images, direction, isLightMode, onImageClick }) => {
   // Double the images and use -50% translation for a perfect seamless infinite loop
   const doubled = [...images, ...images];
   const animationClass =
-    direction === "left" ? "animate-scroll-left" : "animate-scroll-right";
+    direction === "left" ? "gallery-scroll-left" : "gallery-scroll-right";
 
   return (
-    <div className={`flex ${animationClass} w-max`}>
+    <div className={`flex ${animationClass} w-max hover:pause-on-hover`}>
       {doubled.map((img, idx) => (
         <div key={`${direction}-${idx}`} className="px-3">
           <div
-            className={`w-72 md:w-96 h-48 md:h-64 rounded-2xl overflow-hidden border shadow-xl flex-shrink-0 group relative ${
+            onClick={() => onImageClick(img)}
+            className={`w-72 md:w-96 h-48 md:h-64 rounded-2xl overflow-hidden border shadow-xl flex-shrink-0 group relative cursor-pointer ${
               isLightMode
                 ? "bg-gray-200 border-black/10"
                 : "bg-[#0B0914] border-white/10"
@@ -66,6 +67,7 @@ const GalleryRow = ({ images, direction, isLightMode }) => {
 const ImageGallery = ({ isLightMode }) => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
   const fetchImages = async () => {
     setLoading(true);
@@ -140,6 +142,16 @@ const ImageGallery = ({ isLightMode }) => {
     setLoading(false);
   };
 
+  const handleNext = (e) => {
+    e?.stopPropagation();
+    setSelectedImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const handlePrev = (e) => {
+    e?.stopPropagation();
+    setSelectedImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
   useEffect(() => {
     fetchImages();
   }, []);
@@ -188,6 +200,7 @@ const ImageGallery = ({ isLightMode }) => {
             images={finalRow1}
             direction="left"
             isLightMode={isLightMode}
+            onImageClick={(img) => setSelectedImageIndex(images.indexOf(img))}
           />
         </div>
         <div className="w-full overflow-hidden">
@@ -195,6 +208,7 @@ const ImageGallery = ({ isLightMode }) => {
             images={finalRow2}
             direction="right"
             isLightMode={isLightMode}
+            onImageClick={(img) => setSelectedImageIndex(images.indexOf(img))}
           />
         </div>
         <div className="w-full overflow-hidden">
@@ -202,9 +216,89 @@ const ImageGallery = ({ isLightMode }) => {
             images={finalRow3}
             direction="left"
             isLightMode={isLightMode}
+            onImageClick={(img) => setSelectedImageIndex(images.indexOf(img))}
           />
         </div>
       </div>
+
+      {/* Train Detail View Overlay */}
+      {selectedImageIndex !== null && (
+        <div 
+          className="fixed inset-0 z-[1000] flex items-center justify-center p-4 md:p-10"
+          onClick={() => setSelectedImageIndex(null)}
+        >
+          {/* Animated Background Blur */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-2xl overflow-hidden pointer-events-none">
+            <div className="absolute inset-0 opacity-20">
+               <div className="flex flex-col gap-20 py-20">
+                  <div className="flex gallery-scroll-left w-max whitespace-nowrap">
+                    {Array(10).fill(0).map((_, i) => (
+                      <div key={i} className="w-[400px] h-[250px] mx-10 border-4 border-white/10 rounded-[3rem] bg-white/5" />
+                    ))}
+                  </div>
+                  <div className="flex gallery-scroll-right w-max whitespace-nowrap">
+                    {Array(10).fill(0).map((_, i) => (
+                      <div key={i} className="w-[400px] h-[250px] mx-10 border-4 border-white/10 rounded-[3rem] bg-white/5" />
+                    ))}
+                  </div>
+               </div>
+            </div>
+          </div>
+
+          {/* Close Button */}
+          <button 
+            className="absolute top-6 right-6 z-50 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-md transition-all border border-white/10"
+            onClick={() => setSelectedImageIndex(null)}
+          >
+            <X size={24} />
+          </button>
+
+          {/* Left Arrow */}
+          <button 
+            className="absolute left-6 z-50 p-4 bg-white/5 hover:bg-white/10 rounded-full text-white backdrop-blur-md transition-all border border-white/5 hidden md:block"
+            onClick={handlePrev}
+          >
+            <ChevronLeft size={32} />
+          </button>
+
+          {/* Right Arrow */}
+          <button 
+            className="absolute right-6 z-50 p-4 bg-white/5 hover:bg-white/10 rounded-full text-white backdrop-blur-md transition-all border border-white/5 hidden md:block"
+            onClick={handleNext}
+          >
+            <ChevronRight size={32} />
+          </button>
+
+          {/* Central Image "Carriage" */}
+          <div 
+            className="relative z-10 w-full max-w-5xl aspect-[16/10] md:aspect-video bg-black/40 rounded-[2rem] md:rounded-[4rem] border-8 border-white/10 shadow-2xl overflow-hidden flex items-center justify-center p-4 md:p-8 group"
+            onClick={(e) => e.stopPropagation()}
+          >
+             {/* Decorative "Train Carriage" Elements */}
+             <div className="absolute top-0 left-0 w-full h-4 bg-gradient-to-b from-white/10 to-transparent" />
+             <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-black/40 to-transparent flex items-center justify-center gap-20">
+                <div className="w-12 h-1 bg-white/20 rounded-full" />
+                <div className="w-12 h-1 bg-white/20 rounded-full" />
+                <div className="w-12 h-1 bg-white/20 rounded-full" />
+             </div>
+
+             <img 
+               src={images[selectedImageIndex].url} 
+               alt="Zoomed view" 
+               className="max-w-full max-h-full object-contain rounded-xl md:rounded-3xl shadow-2xl transition-all duration-500"
+             />
+
+             {/* Mobile Navigation Taps */}
+             <div className="absolute inset-y-0 left-0 w-1/4 z-20 md:hidden" onClick={handlePrev} />
+             <div className="absolute inset-y-0 right-0 w-1/4 z-20 md:hidden" onClick={handleNext} />
+             
+             {/* Tag */}
+             <div className="absolute top-8 left-8 bg-cyan-500 text-black px-6 py-2 rounded-full font-black text-[10px] tracking-[0.3em] uppercase">
+                {images[selectedImageIndex].tag || "Visual Asset"}
+             </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

@@ -10,7 +10,11 @@ const AdminAbout = () => {
     heading: "",
     subtitle: "",
     bio: "",
-    imageUrl: ""
+    imageUrl: "",
+    imageUrl_hero: "",
+    imageUrl_about: "",
+    skillsSpeed: 10,
+    gallerySpeed: 15
   });
 
   const fetchProfile = async () => {
@@ -26,7 +30,9 @@ const AdminAbout = () => {
           heading: "About Me",
           subtitle: "Passionate Engineering Technology Student",
           bio: "I am a passionate and skilled engineer pursuing a Bachelor of Engineering Technology with Honours in Instrumentation and Automation...",
-          imageUrl: "/profile.jpg"
+          imageUrl: "/profile.jpg",
+          skillsSpeed: 10,
+          gallerySpeed: 15
         });
       }
     } catch (err) {
@@ -170,6 +176,33 @@ const AdminAbout = () => {
                 className="w-full px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm resize-none"
                 required
               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-xs font-bold tracking-widest uppercase mb-1.5 text-white/40">Skills Speed (s)</label>
+                <input
+                  type="number"
+                  value={form.skillsSpeed || 10}
+                  onChange={(e) => setForm((f) => ({ ...f, skillsSpeed: parseInt(e.target.value) || 0 }))}
+                  className="w-full px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm"
+                  min="0"
+                  step="1"
+                />
+                <p className="mt-1 text-[10px] text-white/20 italic">Lower is faster (time for one full loop)</p>
+              </div>
+              <div>
+                <label className="block text-xs font-bold tracking-widest uppercase mb-1.5 text-white/40">Gallery Speed (s)</label>
+                <input
+                  type="number"
+                  value={form.gallerySpeed || 15}
+                  onChange={(e) => setForm((f) => ({ ...f, gallerySpeed: parseInt(e.target.value) || 0 }))}
+                  className="w-full px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm"
+                  min="0"
+                  step="1"
+                />
+                <p className="mt-1 text-[10px] text-white/20 italic">Lower is faster (time for one full loop)</p>
+              </div>
             </div>
 
             <button type="submit" disabled={saving} className="w-full py-3 bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-black text-sm uppercase tracking-widest rounded-xl hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all disabled:opacity-60 flex items-center justify-center gap-2">

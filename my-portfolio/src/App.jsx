@@ -81,6 +81,13 @@ function Portfolio() {
   }, []);
 
   useEffect(() => {
+    if (profileData) {
+      document.documentElement.style.setProperty('--skills-speed', `${profileData.skillsSpeed || 10}s`);
+      document.documentElement.style.setProperty('--gallery-speed', `${profileData.gallerySpeed || 15}s`);
+    }
+  }, [profileData]);
+
+  useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
