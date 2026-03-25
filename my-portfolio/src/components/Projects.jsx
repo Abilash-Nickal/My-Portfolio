@@ -93,19 +93,23 @@ const Projects = ({ isLightMode, onSelectProject, projects = [] }) => {
                 : "bg-[#183c3b]/25 border-cyan-400/1 hover:bg-white/[0.08] hover:border-cyan-400/40"
                 }`}
             >
-              {/* Multi-Category Badges - Top Left Corner-Hug Styled (matching education style but with glow) */}
+              {/* Multi-Category Badge - Shows selected filter or primary category */}
               <div className="absolute top-0 left-0 flex gap-2 z-20 w-max max-w-[95%]">
-                {project.category?.split(',').map((cat, idx) => (
-                  <div
-                    key={idx}
-                    className={`px-4 py-2 font-mono text-[12px] font-black rounded-br-2xl whitespace-nowrap transition-all duration-500 uppercase tracking-widest ${isLightMode
-                      ? "bg-orange-500 text-white shadow-[0_0_20px_rgba(249,115,22,0.4)] group-hover:shadow-[0_0_30px_rgba(249,115,22,0.6)]"
-                      : "bg-cyan-400 text-black shadow-[0_0_20px_rgba(34,211,238,0.4)] group-hover:shadow-[0_0_30px_rgba(34,211,238,0.6)]"
-                      }`}
-                  >
-                    {cat.trim()}
-                  </div>
-                )).slice(0, activeFilter === "All" ? 1 : undefined)}
+                {project.category?.split(',')
+                  .map(s => s.trim())
+                  .filter(cat => activeFilter === "All" || cat === activeFilter)
+                  .slice(0, 1)
+                  .map((cat, idx) => (
+                    <div
+                      key={idx}
+                      className={`px-4 py-2 font-mono text-[12px] font-black rounded-br-2xl whitespace-nowrap transition-all duration-500 uppercase tracking-widest ${isLightMode
+                        ? "bg-orange-500 text-white shadow-[0_0_20px_rgba(249,115,22,0.4)] group-hover:shadow-[0_0_30px_rgba(249,115,22,0.6)]"
+                        : "bg-cyan-400 text-black shadow-[0_0_20px_rgba(34,211,238,0.4)] group-hover:shadow-[0_0_30px_rgba(34,211,238,0.6)]"
+                        }`}
+                    >
+                      {cat}
+                    </div>
+                  ))}
               </div>
 
               {/* Association Logo - Top Right */}
