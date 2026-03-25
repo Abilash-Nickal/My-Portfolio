@@ -253,40 +253,37 @@ const ImageGallery = ({ isLightMode }) => {
             <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
           </button>
 
-          {/* Central Image "Carriage" Area */}
-          <div 
-            className="relative z-10 w-full max-w-7xl flex items-center justify-center gap-2 md:gap-8 p-2"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Left Arrow - Moved Near Image */}
+          {/* Central Content Area */}
+          <div className="relative z-10 flex items-center justify-center gap-4 md:gap-12 w-full h-full pointer-events-none">
+            
+            {/* Left Button - Needs pointer events */}
             <button 
-              className="z-50 p-4 md:p-6 bg-white/5 hover:bg-white/10 rounded-full text-white/40 hover:text-white backdrop-blur-md transition-all border border-white/5 hidden lg:flex items-center justify-center group flex-shrink-0"
-              onClick={handlePrev}
+              className="p-4 md:p-6 bg-white/5 hover:bg-white/10 rounded-full text-white/40 hover:text-white backdrop-blur-md transition-all border border-white/5 hidden lg:flex items-center justify-center group pointer-events-auto"
+              onClick={(e) => { e.stopPropagation(); handlePrev(); }}
             >
               <ChevronLeft size={24} className="group-hover:-translate-x-1 transition-transform" />
             </button>
 
-            {/* Image Container */}
-            <div className="relative flex flex-col items-center">
-               {/* Refined "Train" Pinstripe Accents */}
-               <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-48 h-0.5 bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
-               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-48 h-0.5 bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
-
-               {/* Image Frame with Glassmorphism */}
+            {/* Image Container - Needs pointer events but stops propagation */}
+            <div 
+              className="relative flex flex-col items-center pointer-events-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+               {/* Image Frame */}
                <div className="relative rounded-2xl md:rounded-3xl border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden bg-white/5 backdrop-blur-sm transition-all duration-700">
                   <img 
                     src={images[selectedImageIndex].url} 
                     alt="Gallery content" 
-                    className="max-w-[85vw] md:max-w-4xl max-h-[75vh] object-contain shadow-2xl animate-in zoom-in-95 duration-500"
+                    className="max-w-[85vw] lg:max-w-5xl max-h-[75vh] object-contain shadow-2xl animate-in zoom-in-95 duration-500"
                   />
                   
-                  {/* Mobile Tap Areas */}
-                  <div className="absolute inset-y-0 left-0 w-1/3 z-20 lg:hidden cursor-pointer" onClick={handlePrev} />
-                  <div className="absolute inset-y-0 right-0 w-1/3 z-20 lg:hidden cursor-pointer" onClick={handleNext} />
+                  {/* Mobile navigation - also stops propagation */}
+                  <div className="absolute inset-y-0 left-0 w-1/4 z-20 md:hidden cursor-pointer" onClick={(e) => { e.stopPropagation(); handlePrev(); }} />
+                  <div className="absolute inset-y-0 right-0 w-1/4 z-20 md:hidden cursor-pointer" onClick={(e) => { e.stopPropagation(); handleNext(); }} />
                </div>
                
                {/* Info Bar */}
-               <div className="mt-6 flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+               <div className="mt-6 flex items-center gap-4 transition-opacity duration-500">
                   <div className="h-px w-8 bg-white/10" />
                   <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">
                     {images[selectedImageIndex].tag || "Gallery Asset"}
@@ -298,10 +295,10 @@ const ImageGallery = ({ isLightMode }) => {
                </div>
             </div>
 
-            {/* Right Arrow - Moved Near Image */}
+            {/* Right Button - Needs pointer events */}
             <button 
-              className="z-50 p-4 md:p-6 bg-white/5 hover:bg-white/10 rounded-full text-white/40 hover:text-white backdrop-blur-md transition-all border border-white/5 hidden lg:flex items-center justify-center group flex-shrink-0"
-              onClick={handleNext}
+              className="p-4 md:p-6 bg-white/5 hover:bg-white/10 rounded-full text-white/40 hover:text-white backdrop-blur-md transition-all border border-white/5 hidden lg:flex items-center justify-center group pointer-events-auto"
+              onClick={(e) => { e.stopPropagation(); handleNext(); }}
             >
               <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
             </button>
