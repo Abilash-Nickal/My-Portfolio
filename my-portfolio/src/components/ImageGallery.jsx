@@ -221,80 +221,86 @@ const ImageGallery = ({ isLightMode }) => {
         </div>
       </div>
 
-      {/* Train Detail View Overlay */}
+      {/* Train Detail View Overlay (Refined Glassmorphic Design) */}
       {selectedImageIndex !== null && (
         <div 
-          className="fixed inset-0 z-[1000] flex items-center justify-center p-4 md:p-10"
+          className="fixed inset-0 z-[1000] flex items-center justify-center p-4 md:p-10 transition-all duration-500 animate-fade-in"
           onClick={() => setSelectedImageIndex(null)}
         >
-          {/* Animated Background Blur */}
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-2xl overflow-hidden pointer-events-none">
-            <div className="absolute inset-0 opacity-20">
-               <div className="flex flex-col gap-20 py-20">
+          {/* Animated Background Blur - More Subtle */}
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-xl overflow-hidden pointer-events-none transition-all duration-700">
+            <div className="absolute inset-0 opacity-10">
+               <div className="flex flex-col gap-24 py-20">
                   <div className="flex gallery-scroll-left w-max whitespace-nowrap">
-                    {Array(10).fill(0).map((_, i) => (
-                      <div key={i} className="w-[400px] h-[250px] mx-10 border-4 border-white/10 rounded-[3rem] bg-white/5" />
+                    {Array(8).fill(0).map((_, i) => (
+                      <div key={i} className="w-[500px] h-[300px] mx-12 border border-white/10 rounded-[2rem] bg-white/5" />
                     ))}
                   </div>
                   <div className="flex gallery-scroll-right w-max whitespace-nowrap">
-                    {Array(10).fill(0).map((_, i) => (
-                      <div key={i} className="w-[400px] h-[250px] mx-10 border-4 border-white/10 rounded-[3rem] bg-white/5" />
+                    {Array(8).fill(0).map((_, i) => (
+                      <div key={i} className="w-[500px] h-[300px] mx-12 border border-white/10 rounded-[2rem] bg-white/5" />
                     ))}
                   </div>
                </div>
             </div>
           </div>
 
-          {/* Close Button */}
+          {/* Close Button - More Integrated */}
           <button 
-            className="absolute top-6 right-6 z-50 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-md transition-all border border-white/10"
+            className="absolute top-8 right-8 z-50 p-4 bg-white/5 hover:bg-white/10 rounded-full text-white/50 hover:text-white backdrop-blur-md transition-all border border-white/10 group"
             onClick={() => setSelectedImageIndex(null)}
           >
-            <X size={24} />
+            <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
           </button>
 
-          {/* Left Arrow */}
+          {/* Left Arrow - Sleeker */}
           <button 
-            className="absolute left-6 z-50 p-4 bg-white/5 hover:bg-white/10 rounded-full text-white backdrop-blur-md transition-all border border-white/5 hidden md:block"
+            className="absolute left-8 z-50 p-6 bg-white/5 hover:bg-white/10 rounded-full text-white/40 hover:text-white backdrop-blur-md transition-all border border-white/5 hidden lg:flex items-center justify-center group"
             onClick={handlePrev}
           >
-            <ChevronLeft size={32} />
+            <ChevronLeft size={24} className="group-hover:-translate-x-1 transition-transform" />
           </button>
 
-          {/* Right Arrow */}
+          {/* Right Arrow - Sleeker */}
           <button 
-            className="absolute right-6 z-50 p-4 bg-white/5 hover:bg-white/10 rounded-full text-white backdrop-blur-md transition-all border border-white/5 hidden md:block"
+            className="absolute right-8 z-50 p-6 bg-white/5 hover:bg-white/10 rounded-full text-white/40 hover:text-white backdrop-blur-md transition-all border border-white/5 hidden lg:flex items-center justify-center group"
             onClick={handleNext}
           >
-            <ChevronRight size={32} />
+            <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
           </button>
 
-          {/* Central Image "Carriage" */}
+          {/* Central Image "Carriage" - Dynamic Fitting */}
           <div 
-            className="relative z-10 w-full max-w-5xl aspect-[16/10] md:aspect-video bg-black/40 rounded-[2rem] md:rounded-[4rem] border-8 border-white/10 shadow-2xl overflow-hidden flex items-center justify-center p-4 md:p-8 group"
+            className="relative z-10 max-w-[95vw] max-h-[90vh] flex flex-col items-center justify-center p-2 md:p-4 group"
             onClick={(e) => e.stopPropagation()}
           >
-             {/* Decorative "Train Carriage" Elements */}
-             <div className="absolute top-0 left-0 w-full h-4 bg-gradient-to-b from-white/10 to-transparent" />
-             <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-black/40 to-transparent flex items-center justify-center gap-20">
-                <div className="w-12 h-1 bg-white/20 rounded-full" />
-                <div className="w-12 h-1 bg-white/20 rounded-full" />
-                <div className="w-12 h-1 bg-white/20 rounded-full" />
+             {/* Refined "Train" Pinstripe Accents */}
+             <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-48 h-0.5 bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
+             <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-48 h-0.5 bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
+
+             {/* Image Frame with Glassmorphism */}
+             <div className="relative rounded-2xl md:rounded-3xl border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden bg-white/5 backdrop-blur-sm transition-all duration-700">
+                <img 
+                  src={images[selectedImageIndex].url} 
+                  alt="Gallery content" 
+                  className="max-w-full max-h-[80vh] object-contain shadow-2xl animate-in zoom-in-95 duration-500"
+                />
+                
+                {/* Mobile Tap Areas */}
+                <div className="absolute inset-y-0 left-0 w-1/3 z-20 lg:hidden cursor-pointer" onClick={handlePrev} />
+                <div className="absolute inset-y-0 right-0 w-1/3 z-20 lg:hidden cursor-pointer" onClick={handleNext} />
              </div>
-
-             <img 
-               src={images[selectedImageIndex].url} 
-               alt="Zoomed view" 
-               className="max-w-full max-h-full object-contain rounded-xl md:rounded-3xl shadow-2xl transition-all duration-500"
-             />
-
-             {/* Mobile Navigation Taps */}
-             <div className="absolute inset-y-0 left-0 w-1/4 z-20 md:hidden" onClick={handlePrev} />
-             <div className="absolute inset-y-0 right-0 w-1/4 z-20 md:hidden" onClick={handleNext} />
              
-             {/* Tag */}
-             <div className="absolute top-8 left-8 bg-cyan-500 text-black px-6 py-2 rounded-full font-black text-[10px] tracking-[0.3em] uppercase">
-                {images[selectedImageIndex].tag || "Visual Asset"}
+             {/* Info Bar */}
+             <div className="mt-6 flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="h-px w-8 bg-white/10" />
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">
+                  {images[selectedImageIndex].tag || "Gallery Asset"}
+                </span>
+                <span className="text-[10px] font-black text-cyan-400/60 font-mono">
+                  {selectedImageIndex + 1} / {images.length}
+                </span>
+                <div className="h-px w-8 bg-white/10" />
              </div>
           </div>
         </div>
