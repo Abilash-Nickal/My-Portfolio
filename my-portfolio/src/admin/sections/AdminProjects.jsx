@@ -21,22 +21,91 @@ const AdminProjects = () => {
   const [selectedImageSlot, setSelectedImageSlot] = useState(null);
   const [selectedRepoImages, setSelectedRepoImages] = useState([]); // For multiple selection
   const [isMultipleSelection, setIsMultipleSelection] = useState(false);
+  const [repoError, setRepoError] = useState(null);
+  const [fullManifest, setFullManifest] = useState(null);
 
   const REPO_OWNER = "Abilash-Nickal";
   const REPO_NAME = "My-Portfolio";
 
   const fetchRepoContents = async (path = "") => {
     setRepoLoading(true);
+    setRepoError(null);
     const targetPath = path || "portfolio-images";
+    
     try {
-      const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetPath}`);
+      // 1. Try to use Manifest + JSDelivr (Bulletproof Architecture)
+      let manifest = fullManifest;
+      if (!manifest) {
+        try {
+          const mResponse = await fetch(`https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}/repo-manifest.json`);
+          if (mResponse.ok) {
+            manifest = await mResponse.json();
+            setFullManifest(manifest);
+          }
+        } catch (mErr) {
+          console.warn("Manifest fetch failed, will try GitHub API", mErr);
+        }
+      }
+
+      if (manifest) {
+        // Find the node in the tree
+        const findNode = (node, target) => {
+          if (node.path === target) return node;
+          if (node.children) {
+            for (const child of node.children) {
+              const found = findNode(child, target);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+
+        const node = findNode(manifest, targetPath);
+        if (node && node.children) {
+          const data = node.children.map(child => ({
+            name: child.name,
+            path: child.path,
+            sha: child.path,
+            type: child.type,
+            download_url: `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}/${child.path}`
+          }));
+          setRepoImages(data);
+          setCurrentPath(targetPath);
+          setRepoLoading(false);
+          return;
+        }
+      }
+
+      // 2. Fallback to GitHub API (Legacy/Real-time)
+      const headers = {};
+      const token = import.meta.env.VITE_GITHUB_TOKEN;
+      if (token) {
+        headers["Authorization"] = `token ${token}`;
+      }
+
+      const response = await fetch(
+        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetPath}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (response.status === 403 && errorData.message?.includes("rate limit exceeded")) {
+          throw new Error("GitHub API rate limit exceeded. Please wait a while or add a GitHub Token to your .env file.");
+        }
+        throw new Error(errorData.message || `Failed to fetch repository: ${response.statusText}`);
+      }
+
       const data = await response.json();
       if (Array.isArray(data)) {
         setRepoImages(data);
         setCurrentPath(targetPath);
+      } else {
+        setRepoImages([]);
       }
     } catch (error) {
       console.error("Error fetching repo contents:", error);
+      setRepoError(error.message);
     }
     setRepoLoading(false);
   };
@@ -626,7 +695,10 @@ const AdminProjects = () => {
                           if (isDir) {
                             fetchRepoContents(item.path);
                           } else {
-                            const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`;
+                            const useJSDelivr = true; // Use CDN for selection
+                            const cdnUrl = `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}/${item.path}`;
+                            const rawUrl = useJSDelivr ? cdnUrl : `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`;
+                            
                             if (isMultipleSelection) {
                               setSelectedRepoImages(prev => 
                                 prev.includes(rawUrl) 
@@ -665,9 +737,24 @@ const AdminProjects = () => {
                       </button>
                     );
                   })}
-                  {repoImages.length === 0 && (
+                  {repoImages.length === 0 && !repoError && (
                     <div className="col-span-full py-20 text-center text-white/20 text-xs uppercase tracking-widest font-mono">
                       This folder is empty
+                    </div>
+                  )}
+                  {repoError && (
+                    <div className="col-span-full py-16 px-6 text-center">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-500/10 text-red-400 mb-4">
+                        <X size={24} />
+                      </div>
+                      <p className="text-white font-bold mb-2">Failed to Load Repository</p>
+                      <p className="text-white/40 text-xs max-w-sm mx-auto mb-6">{repoError}</p>
+                      <button 
+                        onClick={() => fetchRepoContents(currentPath || "portfolio-images")}
+                        className="px-6 py-2 bg-white/5 border border-white/10 rounded-xl text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+                      >
+                        Try Again
+                      </button>
                     </div>
                   )}
                 </div>

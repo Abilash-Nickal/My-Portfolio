@@ -84,23 +84,21 @@ const ImageGallery = ({ isLightMode }) => {
       console.error("Failed to load Firestore images", err);
     }
 
-    // 2. Fetch from GitHub (src/assets/gallery)
+    // 2. Fetch from GitHub via JSDelivr (Bulletproof Architecture)
     try {
       const REPO_OWNER = "Abilash-Nickal";
       const REPO_NAME = "My-Portfolio";
-      const FOLDER_PATH = "my-portfolio/src/assets/gallery"; // Matches the workspace structure
+      const FOLDER_PATH = "my-portfolio/src/assets/gallery"; 
       
-      const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}`);
+      // 2a. Fetch gallery manifest instead of listing directory via GitHub API
+      const response = await fetch(`https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}/gallery-manifest.json`);
       if (response.ok) {
-        const data = await response.json();
-        // Filter for images only
-        const gitHubImages = data
-          .filter(file => /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file.name))
-          .map(file => ({
-            url: file.download_url,
-            tag: null,
-            videoUrl: null
-          }));
+        const filenames = await response.json();
+        const gitHubImages = filenames.map(name => ({
+          url: `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}/${FOLDER_PATH}/${name}`,
+          tag: null,
+          videoUrl: null
+        }));
         
         // Combine with firestore images, avoiding duplicates by URL
         const existingUrls = new Set(allImages.map(img => img.url));
@@ -108,7 +106,31 @@ const ImageGallery = ({ isLightMode }) => {
         allImages = [...allImages, ...uniqueGitHubImages];
       }
     } catch (err) {
-      console.error("Failed to load GitHub gallery images", err);
+      console.error("Failed to load GitHub gallery images via JSDelivr", err);
+      
+      // Optional: Legacy GitHub API Fallback (could be removed for 100% bulletproof)
+      console.log("Attempting legacy GitHub API fallback...");
+      try {
+        const REPO_OWNER = "Abilash-Nickal";
+        const REPO_NAME = "My-Portfolio";
+        const FOLDER_PATH = "my-portfolio/src/assets/gallery";
+        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}`);
+        if (response.ok) {
+          const data = await response.json();
+          const gitHubImages = data
+            .filter(file => /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file.name))
+            .map(file => ({
+              url: file.download_url,
+              tag: null,
+              videoUrl: null
+            }));
+          const existingUrls = new Set(allImages.map(img => img.url));
+          const uniqueGitHubImages = gitHubImages.filter(img => !existingUrls.has(img.url));
+          allImages = [...allImages, ...uniqueGitHubImages];
+        }
+      } catch (fallbackErr) {
+        console.error("Fallback failed too", fallbackErr);
+      }
     }
 
     // 3. Shuffle images for random order
