@@ -2,6 +2,64 @@ import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, ArrowRight, Briefcase, Calendar, MapPin } from "lucide-react";
 
+// --- CUSTOM TEXT FORMATTER ---
+const formatDescription = (text, isLightMode) => {
+  if (!text) return null;
+
+  const lines = text.split('\n');
+
+  return lines.map((line, index) => {
+    const trimmedLine = line.trim();
+    
+    // 1. Handle empty lines (spacing)
+    if (trimmedLine === '') {
+      return <div key={index} className="h-4"></div>;
+    }
+
+    // 2. Check if the line is a subheading (starts with ### )
+    const isSubheading = /^###\s/.test(trimmedLine);
+    if (isSubheading) {
+      const headingContent = trimmedLine.substring(4);
+      return (
+        <h4 key={index} className={`text-lg md:text-xl font-black mt-8 mb-4 uppercase tracking-wider ${isLightMode ? 'text-orange-500 border-b border-black/10 pb-2' : 'text-cyan-400 border-b border-white/10 pb-2'}`}>
+          {headingContent}
+        </h4>
+      );
+    }
+
+    // 3. Check if the line is a bullet point
+    const isBullet = /^[-*•]\s/.test(trimmedLine);
+    let content = trimmedLine;
+    if (isBullet) content = content.substring(2);
+
+    // 4. Process **bold** text
+    const parts = content.split(/(\*\*.*?\*\*)/g);
+    const formattedContent = parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return (
+          <strong key={i} className={`font-bold ${isLightMode ? 'text-gray-900' : 'text-white'}`}>
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+      return part;
+    });
+
+    // Render Bullet Point
+    if (isBullet) {
+      return (
+        <div key={index} className="flex items-start mb-3 ml-2 md:ml-4">
+          <span className={`mr-3 mt-2.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${isLightMode ? 'bg-orange-500' : 'bg-cyan-400'}`}></span>
+          <span className="flex-1 leading-relaxed text-left md:text-justify">{formattedContent}</span>
+        </div>
+      );
+    }
+
+    // Render normal paragraph
+    return <p key={index} className="mb-5 leading-relaxed text-left md:text-justify">{formattedContent}</p>;
+  });
+};
+
 const ExperienceDetailOverlay = ({ experience, onClose, isLightMode, allSkills = [], allProjects = [], onSelectProject }) => {
   // Lock body scroll when open
   useEffect(() => {
@@ -93,88 +151,98 @@ const ExperienceDetailOverlay = ({ experience, onClose, isLightMode, allSkills =
 
           {/* SCROLLABLE BODY SECTION */}
           <div className="flex-grow overflow-y-auto no-scrollbar p-8 md:px-16 lg:px-24">
-            <div className="tw-fade-in tw-slide-up tw-delay-500 max-w-xl">
-              <div className="mb-12">
-                <h3 className={`text-[10px] md:text-xs font-black tracking-[0.3em] uppercase mb-6 ${isLightMode ? "text-gray-400" : "text-white/30"}`}>
-                  Role Description
-                </h3>
-                <p className={`text-base md:text-lg leading-relaxed font-light ${isLightMode ? "text-gray-600" : "text-gray-400"}`}>
-                  {experience.desc}
-                </p>
+            <div className="tw-fade-in tw-slide-up tw-delay-500 flex flex-col lg:flex-row gap-12">
+              {/* Main Content Column */}
+              <div className="flex-grow max-w-4xl">
+                <div className="mb-12">
+                  {/* --- APPLIED THE FORMATTER HERE --- */}
+                  <div className={`text-base md:text-lg leading-relaxed font-light ${isLightMode ? "text-gray-600" : "text-gray-400"}`}>
+                    {formatDescription(experience.desc, isLightMode)}
+                  </div>
+                </div>
               </div>
 
-              {/* Skills Gained */}
-              {relatedSkills.length > 0 && (
-                <div className="mb-12">
-                  <h3 className={`text-[10px] md:text-xs font-black tracking-[0.3em] uppercase mb-6 ${isLightMode ? "text-gray-400" : "text-white/30"}`}>
-                    Skills Gained
-                  </h3>
-                  <div className="flex flex-wrap gap-3">
-                    {relatedSkills.map((skill) => (
-                      <div
-                        key={skill.id}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all ${isLightMode 
-                          ? "bg-white border-black/5 hover:border-orange-200" 
-                          : "bg-white/[0.03] border-white/5 hover:border-cyan-400/30"}`}
-                      >
-                        {skill.iconUrl && <img src={skill.iconUrl} alt={skill.name} className="w-5 h-5 object-contain" />}
-                        <span className={`text-xs font-bold ${isLightMode ? "text-gray-700" : "text-white/70"}`}>
-                          {skill.name}
-                        </span>
-                      </div>
-                    ))}
+              {/* Sidebar Column (Tech Icons + Related Projects) */}
+              <div className="w-full lg:w-64 flex-shrink-0 flex flex-col gap-8 pb-24 lg:pt-0 lg:sticky lg:top-0 h-fit">
+                
+                {/* Skills Gained */}
+                {relatedSkills.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-4 mb-4">
+                      <h3 className={`text-[10px] md:text-xs font-black tracking-[0.3em] uppercase whitespace-nowrap ${isLightMode ? "text-gray-400" : "text-white/30"}`}>
+                        Skills Gained
+                      </h3>
+                      <div className={`h-[1px] flex-grow ${isLightMode ? "bg-black/10" : "bg-white/10"}`} />
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {relatedSkills.map((skill) => (
+                        <div
+                          key={skill.id}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-xl border transition-all ${isLightMode 
+                            ? "bg-white border-black/5 hover:border-orange-200" 
+                            : "bg-white/[0.03] border-white/5 hover:border-cyan-400/30"}`}
+                        >
+                          {skill.iconUrl && <img src={skill.iconUrl} alt={skill.name} className="w-4 h-4 object-contain" />}
+                          <span className={`text-[10px] font-bold ${isLightMode ? "text-gray-700" : "text-white/70"}`}>
+                            {skill.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Related Projects */}
-              {relatedProjects.length > 0 && (
-                <div className="mb-12">
-                  <h3 className={`text-[10px] md:text-xs font-black tracking-[0.3em] uppercase mb-6 ${isLightMode ? "text-gray-400" : "text-white/30"}`}>
-                    Project Highlights
-                  </h3>
-                  <div className="space-y-3">
-                    {relatedProjects.map((project) => (
-                      <button
-                        key={project.id}
-                        onClick={() => {
-                          onClose();
-                          setTimeout(() => {
-                            if (onSelectProject) onSelectProject(project);
-                          }, 400);
-                        }}
-                        className={`w-full flex items-center gap-4 p-4 rounded-2xl border text-left group transition-all ${isLightMode
-                          ? "bg-white border-black/5 hover:border-orange-300"
-                          : "bg-white/[0.03] border-white/5 hover:border-cyan-400/30 hover:bg-white/[0.07]"
-                          }`}
-                      >
-                        <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
-                          {(project.imageUrls?.[0] || project.imageUrl) ? (
-                            <img
-                              src={project.imageUrls?.[0] || project.imageUrl}
-                              alt={project.title}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-xs font-black text-gray-400">
-                              {project.title?.charAt(0)}
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className={`font-black text-sm truncate ${isLightMode ? "text-gray-900" : "text-white"}`}>{project.title}</p>
-                          <p className={`text-xs truncate ${isLightMode ? "text-gray-400" : "text-white/30"}`}>{project.category}</p>
-                        </div>
-                        <ArrowRight
-                          size={16}
-                          className={`flex-shrink-0 transition-transform group-hover:translate-x-1 ${isLightMode ? "text-orange-400" : "text-cyan-400"}`}
-                        />
-                      </button>
-                    ))}
+                {/* Related Projects */}
+                {relatedProjects.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-4 mb-4">
+                      <h3 className={`text-[10px] md:text-xs font-black tracking-[0.3em] uppercase whitespace-nowrap ${isLightMode ? "text-gray-400" : "text-white/30"}`}>
+                        Project Highlights
+                      </h3>
+                      <div className={`h-[1px] flex-grow ${isLightMode ? "bg-black/10" : "bg-white/10"}`} />
+                    </div>
+                    <div className="space-y-3">
+                      {relatedProjects.map((project) => (
+                        <button
+                          key={project.id}
+                          onClick={() => {
+                            onClose();
+                            setTimeout(() => {
+                              if (onSelectProject) onSelectProject(project);
+                            }, 400);
+                          }}
+                          className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left group transition-all ${isLightMode
+                            ? "bg-white border-black/5 hover:border-orange-300 shadow-sm"
+                            : "bg-white/[0.03] border-white/5 hover:border-cyan-400/30 hover:bg-white/[0.07]"
+                            }`}
+                        >
+                          <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                            {(project.imageUrls?.[0] || project.imageUrl) ? (
+                              <img
+                                src={project.imageUrls?.[0] || project.imageUrl}
+                                alt={project.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-xs font-black text-gray-400">
+                                {project.title?.charAt(0)}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={`font-black text-[12px] truncate ${isLightMode ? "text-gray-900" : "text-white"}`}>{project.title}</p>
+                            <p className={`text-[10px] truncate ${isLightMode ? "text-gray-400" : "text-white/30"}`}>{project.category}</p>
+                          </div>
+                          <ArrowRight
+                            size={14}
+                            className={`flex-shrink-0 transition-transform group-hover:translate-x-1 ${isLightMode ? "text-orange-400" : "text-cyan-400"}`}
+                          />
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-              <div className="pb-24"></div>
+                )}
+              </div>
             </div>
           </div>
         </div>
