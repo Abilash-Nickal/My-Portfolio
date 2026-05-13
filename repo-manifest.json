@@ -435,7 +435,26 @@
       "name": "images",
       "type": "dir",
       "path": "portfolio-images/images",
-      "children": []
+      "children": [
+        {
+          "name": "ASSOCIATE - ADDITIVE MANUFACTURING.png",
+          "type": "file",
+          "path": "portfolio-images/images/ASSOCIATE - ADDITIVE MANUFACTURING.png",
+          "size": 60356
+        },
+        {
+          "name": "Screenshot 2026-05-13 144833.png",
+          "type": "file",
+          "path": "portfolio-images/images/Screenshot 2026-05-13 144833.png",
+          "size": 269911
+        },
+        {
+          "name": "Screenshot 2026-05-13 144900.png",
+          "type": "file",
+          "path": "portfolio-images/images/Screenshot 2026-05-13 144900.png",
+          "size": 295376
+        }
+      ]
     },
     {
       "name": "web app",
