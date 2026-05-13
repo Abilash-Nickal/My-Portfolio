@@ -1,6 +1,6 @@
 import { Menu, X, Sun, Moon } from "lucide-react";
 
-const navItems = ["Profile", "About", "Skills", "Experience", "Academic", "Projects"];
+const navItems = ["Profile", "About", "Skills", "Experience", "Certificates", "Academic", "Projects"];
 
 const Header = ({
   scrolled,

@@ -44,6 +44,10 @@ body {
   animation: marquee 20s linear infinite;
 }
 
+.animate-marquee-cert {
+  animation: marquee 30s linear infinite;
+}
+
 .group:hover .animate-marquee {
   animation-play-state: paused;
 }

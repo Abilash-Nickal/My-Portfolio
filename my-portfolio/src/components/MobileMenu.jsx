@@ -3,6 +3,7 @@ const menuItems = [
   "About",
   "Skills",
   "Experience",
+  "Certificates",
   "Academic",
   "Projects",
   "Contact",

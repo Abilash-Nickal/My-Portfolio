@@ -22,6 +22,8 @@ import AdminLogin from './admin/AdminLogin';
 import AdminDashboard from './admin/AdminDashboard';
 import ProtectedRoute from './admin/ProtectedRoute';
 import ProjectShortcuts from './components/ProjectShortcuts';
+import Certificates from './components/Certificates';
+import CertificateDetailOverlay from './components/CertificateDetailOverlay';
 import { useAuthState } from './hooks/useAuthState';
 
 function Portfolio() {
@@ -38,6 +40,8 @@ function Portfolio() {
   const [profileData, setProfileData] = useState(null);
   const [allProjects, setAllProjects] = useState([]);
   const [allShortcuts, setAllShortcuts] = useState([]);
+  const [allCertificates, setAllCertificates] = useState([]);
+  const [activeCertificate, setActiveCertificate] = useState(null);
 
   // Fetch projects and skills for linking
   useEffect(() => {
@@ -76,6 +80,17 @@ function Portfolio() {
         const shortcutsData = shortcutSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
         setAllShortcuts(shortcutsData.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
       } catch (err) { console.error("Shortcuts fetch failed:", err); }
+
+      // Fetch Certificates
+      try {
+        const certSnap = await getDocs(collection(db, 'certificates'));
+        const certsData = certSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        setAllCertificates(certsData.sort((a, b) => {
+          const dateA = a.date ? new Date(a.date) : new Date(0);
+          const dateB = b.date ? new Date(b.date) : new Date(0);
+          return dateB - dateA;
+        }));
+      } catch (err) { console.error("Certificates fetch failed:", err); }
     };
     fetchData();
   }, []);
@@ -94,7 +109,7 @@ function Portfolio() {
   }, []);
 
   // --- BROWSER HISTORY MANAGEMENT (BACK BUTTON TO CLOSE OVERLAYS) ---
-  const isAnyOverlayOpen = !!(selectedProject || activeSkill || activeExperience || activeEducation || isContactOpen);
+  const isAnyOverlayOpen = !!(selectedProject || activeSkill || activeExperience || activeEducation || activeCertificate || isContactOpen);
 
   // 1. Listen for back button (popstate)
   useEffect(() => {
@@ -130,6 +145,7 @@ function Portfolio() {
     setMobileMenuOpen(false);
     setActiveSkill(null);
     setSelectedProject(null);
+    setActiveCertificate(null);
     const element = document.getElementById(sectionId);
     if (element) {
       window.scrollTo({ top: element.offsetTop - 80, behavior: 'smooth' });
@@ -155,6 +171,7 @@ function Portfolio() {
     setSelectedProject(null);
     setActiveExperience(null);
     setActiveEducation(null);
+    setActiveCertificate(null);
     setFormSubmitAnimState('idle');
   };
 
@@ -235,12 +252,18 @@ function Portfolio() {
           allProjects={allProjects}
           onSelectProject={setSelectedProject}
         />
+        <CertificateDetailOverlay
+          certificate={activeCertificate}
+          onClose={handleCloseOverlay}
+          isLightMode={isLightMode}
+        />
 
-        <main className={`relative z-10 pt-10 transition-all duration-1000 ${(activeSkill || selectedProject || activeExperience || activeEducation) ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`}>
+        <main className={`relative z-10 pt-10 transition-all duration-1000 ${(activeSkill || selectedProject || activeExperience || activeEducation || activeCertificate) ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`}>
           <Hero isLightMode={isLightMode} onContactClick={() => setIsContactOpen(true)} profileData={profileData} shortcuts={allShortcuts} onSelectProject={setSelectedProject} />
           <About isLightMode={isLightMode} profileData={profileData} />
           <Skills onSelectSkill={setActiveSkill} isLightMode={isLightMode} skills={allSkills} />
           <Experience isLightMode={isLightMode} onSelectExperience={setActiveExperience} />
+          <Certificates isLightMode={isLightMode} certificates={allCertificates} onSelectCertificate={setActiveCertificate} />
           <Education isLightMode={isLightMode} onSelectEducation={setActiveEducation} />
           <Projects isLightMode={isLightMode} onSelectProject={setSelectedProject} projects={allProjects} />
 

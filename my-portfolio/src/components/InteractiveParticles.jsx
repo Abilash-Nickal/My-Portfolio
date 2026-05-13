@@ -11,9 +11,9 @@ const InteractiveParticles = ({ isLightMode }) => {
         let animationFrameId;
 
         let particles = [];
-        // INCREASED: Particle count (from 60 to 150)
+        // REDUCED: Particle count for performance
         const isMobile = window.innerWidth < 768;
-        const particleCount = isMobile ? 35 : 70;
+        const particleCount = isMobile ? 15 : 30;
         const mouse = { x: null, y: null, radius: isMobile ? 100 : 200 };
 
         const resize = () => {

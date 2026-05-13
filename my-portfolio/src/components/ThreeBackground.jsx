@@ -148,7 +148,7 @@ const ThreeBackground = ({ activeSkill, isLightMode, formSubmitAnimState }) => {
     const scene = new THREE.Scene();
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
     currentMount.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
