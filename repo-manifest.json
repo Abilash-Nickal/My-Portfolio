@@ -432,6 +432,12 @@
       ]
     },
     {
+      "name": "images",
+      "type": "dir",
+      "path": "portfolio-images/images",
+      "children": []
+    },
+    {
       "name": "web app",
       "type": "dir",
       "path": "portfolio-images/web app",
